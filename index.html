@@ -19,12 +19,13 @@
     --accent:#2c5f6e;
     --accent-soft:#e6eef0;
     --accent-deep:#1d4350;
-    --warn-bg:#fbf3e6;
-    --warn-line:#e9c98d;
-    --warn-text:#7a5414;
+    --brand:#AD3374;
+    --brand-soft:#f7e8f1;
+    --calc-bg:#f0f7f9;
+    --calc-border:#cde3e8;
     --radius:10px;
-    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
   html[data-theme="dark"]{
     --ink:#e8eaee;
@@ -36,381 +37,121 @@
     --accent:#5fa6b8;
     --accent-soft:#243640;
     --accent-deep:#7cc0d1;
-    --warn-bg:#3a3120;
-    --warn-line:#6b5526;
-    --warn-text:#e3bd72;
+    --brand-soft:#3a1a2a;
+    --calc-bg:#1a2830;
+    --calc-border:#2a4a55;
   }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:var(--sans);
-    background:var(--bg);
-    color:var(--ink);
-    line-height:1.5;
-    transition:background .2s ease, color .2s ease;
-  }
-  .shell{
-    max-width:880px;
-    margin:0 auto;
-    padding:40px 24px 120px;
-  }
-  header.page{
-    margin-bottom:32px;
-  }
-  .eyebrow{
-    font-family:var(--mono);
-    font-size:12px;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    color:var(--accent);
-    margin-bottom:8px;
-  }
-  h1{
-    font-size:26px;
-    font-weight:600;
-    margin:0 0 6px;
-    letter-spacing:-0.01em;
-  }
-  .sub{
-    color:var(--ink-soft);
-    font-size:14.5px;
-    max-width:60ch;
-  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.55;transition:background .2s,color .2s;}
 
-  /* progress */
-  .progress-wrap{
-    position:sticky;
-    top:0;
-    z-index:20;
-    background:var(--bg);
-    padding:14px 0 18px;
-    margin-bottom:8px;
-  }
-  .progress-track{
-    height:6px;
-    background:var(--line-soft);
-    border-radius:4px;
-    overflow:hidden;
-  }
-  .progress-fill{
-    height:100%;
-    background:#AD3374;
-    width:0%;
-    transition:width .25s ease;
-  }
-  .progress-label{
-    font-family:var(--mono);
-    font-size:11.5px;
-    color:var(--ink-soft);
-    margin-top:6px;
-    display:flex;
-    justify-content:space-between;
-  }
+  .shell{max-width:900px;margin:0 auto;padding:36px 24px 120px;}
 
-  section.module{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:28px 28px 30px;
-    margin-bottom:20px;
-    transition:background .2s ease, border-color .2s ease;
-  }
-  .module-head{
-    display:flex;
-    align-items:baseline;
-    gap:10px;
-    margin-bottom:4px;
-  }
-  .module-num{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--accent);
-    border:1px solid var(--accent-soft);
-    background:var(--accent-soft);
-    border-radius:5px;
-    padding:2px 7px;
-  }
-  .module-title{
-    font-size:17px;
-    font-weight:600;
-    margin:0;
-  }
-  .module-desc{
-    color:var(--ink-soft);
-    font-size:13.5px;
-    margin:6px 0 22px;
-  }
+  /* ── HEADER ── */
+  .header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:28px;}
+  .brand-word{font-family:'Poppins',var(--sans);font-weight:800;font-size:30px;letter-spacing:-0.01em;color:var(--ink);margin-bottom:3px;}
+  .brand-word .brand-accent{color:#AD3374;}
+  .brand-tagline{font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:2.6px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:18px;}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:7px;}
+  h1{font-size:25px;font-weight:650;letter-spacing:-0.01em;margin-bottom:6px;}
+  .sub{color:var(--ink-soft);font-size:14px;max-width:58ch;}
 
-  .field-row{
-    display:grid;
-    grid-template-columns:1fr 200px;
-    gap:18px;
-    align-items:start;
-    padding:14px 0;
-    border-top:1px solid var(--line-soft);
-  }
-  .field-row:first-of-type{ border-top:none; padding-top:0; }
+  .theme-toggle{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);font-family:var(--sans);font-size:13px;font-weight:500;padding:8px 14px;border-radius:8px;cursor:pointer;transition:background .2s,border-color .2s,color .2s;white-space:nowrap;}
+  .theme-toggle:hover{border-color:var(--accent);color:var(--ink);}
 
-  label.field-label{
-    font-size:14px;
-    font-weight:500;
-    color:var(--ink);
-    display:block;
-  }
-  .field-hint{
-    font-size:12.5px;
-    color:var(--ink-soft);
-    margin-top:3px;
-    max-width:46ch;
-  }
+  /* ── PROGRESS ── */
+  .progress-wrap{position:sticky;top:0;z-index:20;background:var(--bg);padding:12px 0 16px;margin-bottom:6px;}
+  .progress-track{height:5px;background:var(--line-soft);border-radius:4px;overflow:hidden;}
+  .progress-fill{height:100%;background:#AD3374;width:0%;transition:width .25s ease;}
+  .progress-label{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin-top:5px;display:flex;justify-content:space-between;}
 
-  input[type=text], input[type=number], textarea{
-    width:100%;
-    padding:9px 11px;
-    border:1px solid var(--line);
-    border-radius:7px;
-    font-size:14px;
-    font-family:var(--sans);
-    color:var(--ink);
-    background:var(--panel);
-    transition:border-color .15s, box-shadow .15s, background .2s ease;
-  }
-  textarea{ resize:vertical; min-height:64px; }
-  input:focus, textarea:focus, select:focus{
-    outline:none;
-    border-color:var(--accent);
-    box-shadow:0 0 0 3px var(--accent-soft);
-  }
-  input.has-error{
-    border-color:#c14a3a;
-  }
-  .error-text{
-    font-size:12px;
-    color:#c14a3a;
-    margin-top:4px;
-    display:none;
-  }
-  .error-text.show{ display:block; }
+  /* ── SECTIONS ── */
+  section.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px 28px 28px;margin-bottom:18px;transition:background .2s,border-color .2s;}
+  .card-head{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+  .card-num{font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-soft);border-radius:5px;padding:2px 7px;}
+  .card-title{font-size:16px;font-weight:650;}
+  .card-desc{color:var(--ink-soft);font-size:13px;margin:5px 0 20px;}
 
-  .unit-input{
-    position:relative;
-  }
-  .unit-input .unit{
-    position:absolute;
-    right:11px;
-    top:50%;
-    transform:translateY(-50%);
-    font-size:12.5px;
-    color:var(--ink-soft);
-    pointer-events:none;
-  }
-  .unit-input input{ padding-right:64px; }
+  /* ── MODULE SELECTOR ── */
+  .module-selector{display:flex;gap:0;border:1px solid var(--line);border-radius:9px;overflow:hidden;width:fit-content;}
+  .module-selector button{border:none;background:var(--panel);font-family:var(--sans);font-size:13.5px;font-weight:500;padding:10px 22px;cursor:pointer;color:var(--ink-soft);transition:background .15s,color .15s;border-right:1px solid var(--line);}
+  .module-selector button:last-child{border-right:none;}
+  .module-selector button.active{background:#AD3374;color:#fff;font-weight:600;}
 
-  /* toggle (yes/no) */
-  .toggle-group{
-    display:inline-flex;
-    border:1px solid var(--line);
-    border-radius:7px;
-    overflow:hidden;
-  }
-  .toggle-group button{
-    border:none;
-    background:var(--panel);
-    font-family:var(--sans);
-    font-size:13.5px;
-    font-weight:500;
-    padding:8px 18px;
-    cursor:pointer;
-    color:var(--ink-soft);
-    transition:background .15s, color .15s;
-  }
-  .toggle-group button + button{ border-left:1px solid var(--line); }
-  .toggle-group button.active{
-    background:var(--accent);
-    color:#fff;
-  }
+  /* ── FIELD ROWS ── */
+  .field-row{display:grid;grid-template-columns:1fr 220px;gap:16px;align-items:start;padding:14px 0;border-top:1px solid var(--line-soft);}
+  .field-row:first-of-type{border-top:none;padding-top:0;}
+  label.field-label{font-size:13.5px;font-weight:550;color:var(--ink);display:block;margin-bottom:2px;}
+  .field-sub{font-size:11.5px;color:var(--ink-soft);margin-top:2px;font-family:var(--mono);}
+  .field-hint{font-size:12px;color:var(--ink-soft);margin-top:3px;}
 
-  .conditional{
-    margin-top:18px;
-    padding:18px;
-    background:var(--accent-soft);
-    border:1px solid var(--line);
-    border-radius:8px;
-    display:none;
+  input[type=text],input[type=number],input[type=email],input[type=date],textarea{
+    width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:7px;font-size:13.5px;font-family:var(--sans);color:var(--ink);background:var(--panel);transition:border-color .15s,box-shadow .15s,background .2s;
   }
-  .conditional.show{ display:block; }
-  .conditional .field-row:first-of-type{ padding-top:0; }
-  .conditional .field-row{ border-top:1px solid var(--line); }
-  .conditional > .field-row:first-child{ border-top:none; }
+  input:focus,textarea:focus{outline:none;border-color:#AD3374;box-shadow:0 0 0 3px #AD337420;}
+  input.has-error{border-color:#c14a3a !important;}
+  .error-text{font-size:11.5px;color:#c14a3a;margin-top:4px;display:none;}
+  .error-text.show{display:block;}
 
-  .explain-note{
-    font-size:12.5px;
-    color:var(--ink-soft);
-    background:var(--panel);
-    border:1px solid var(--line-soft);
-    border-radius:6px;
-    padding:10px 12px;
-    margin-bottom:16px;
-  }
+  /* ── CALCULATED FIELDS ── */
+  .calc-field{background:var(--calc-bg);border:1px solid var(--calc-border);border-radius:7px;padding:9px 12px;font-size:13.5px;color:var(--ink);font-family:var(--mono);min-height:39px;display:flex;align-items:center;transition:background .2s;}
+  .calc-field.highlight{background:var(--brand-soft);border-color:#AD337450;color:#AD3374;font-weight:600;font-size:14px;}
 
-  .computed-banner{
-    background:var(--warn-bg);
-    border:1px solid var(--warn-line);
-    color:var(--warn-text);
-    font-size:12.5px;
-    border-radius:7px;
-    padding:10px 12px;
-    margin-top:6px;
-    display:flex;
-    justify-content:space-between;
-    gap:12px;
-  }
-  .computed-banner strong{ font-family:var(--mono); }
+  /* ── SUMMARY TOTAL ── */
+  .summary-total{background:var(--brand-soft);border:1.5px solid #AD337440;border-radius:10px;padding:18px 22px;margin-top:20px;}
+  .summary-total-label{font-size:12px;font-family:var(--mono);color:#AD3374;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+  .summary-total-value{font-size:22px;font-weight:700;font-family:'Poppins',var(--sans);color:#AD3374;}
+  .summary-total-sub{font-size:11.5px;color:var(--ink-soft);margin-top:4px;font-family:var(--mono);}
 
-  footer.actions{
-    position:sticky;
-    bottom:0;
-    background:linear-gradient(to top, var(--bg) 60%, transparent);
-    padding:24px 0 4px;
-    display:flex;
-    justify-content:flex-end;
-    gap:10px;
-  }
-  button.btn{
-    font-family:var(--sans);
-    font-size:14px;
-    font-weight:600;
-    padding:11px 22px;
-    border-radius:8px;
-    border:1px solid transparent;
-    cursor:pointer;
-  }
-  .btn-secondary{
-    background:#16181c;
-    border-color:#16181c;
-    color:#ffffff;
-  }
-  .btn-primary{
-    background:#16181c;
-    border-color:#16181c;
-    color:#ffffff;
-  }
-  .btn-primary:disabled{
-    background:#7a7d83;
-    border-color:#7a7d83;
-    color:#ffffff;
-    cursor:not-allowed;
-  }
-  .btn-primary:not(:disabled):hover{ background:#2b2e34; }
-  .btn-secondary:hover{ background:#2b2e34; }
+  /* ── BOM TOGGLE ── */
+  .toggle-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .pill-toggle{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;}
+  .pill-toggle button{border:none;background:var(--panel);font-family:var(--sans);font-size:13px;font-weight:500;padding:7px 16px;cursor:pointer;color:var(--ink-soft);transition:background .15s,color .15s;}
+  .pill-toggle button+button{border-left:1px solid var(--line);}
+  .pill-toggle button.active{background:var(--accent);color:#fff;}
 
-  html[data-theme="dark"] .btn-secondary{
-    background:#ffffff;
-    border-color:#ffffff;
-    color:#16181c;
-  }
-  html[data-theme="dark"] .btn-primary{
-    background:#ffffff;
-    border-color:#ffffff;
-    color:#16181c;
-  }
-  html[data-theme="dark"] .btn-primary:disabled{
-    background:#5c5f66;
-    border-color:#5c5f66;
-    color:#1c1c1c;
-  }
-  html[data-theme="dark"] .btn-primary:not(:disabled):hover{ background:#d8dadf; }
-  html[data-theme="dark"] .btn-secondary:hover{ background:#d8dadf; }
+  /* ── SUBFORM ── */
+  .subform{margin-top:18px;background:var(--accent-soft);border:1px solid var(--line);border-radius:8px;padding:18px 20px;}
+  .subform-title{font-size:12.5px;font-weight:650;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+  .subform .field-row{border-top:1px solid var(--line);}
+  .subform .field-row:first-of-type{border-top:none;padding-top:0;}
 
-  .summary-strip{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--ink-soft);
-    text-align:right;
-    margin-bottom:8px;
-  }
+  /* ── HIDDEN / SHOW ── */
+  .hidden{display:none !important;}
 
-  .header-row{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:16px;
-  }
-  .theme-toggle{
-    flex-shrink:0;
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    border:1px solid var(--line);
-    background:var(--panel);
-    color:var(--ink-soft);
-    font-family:var(--sans);
-    font-size:13px;
-    font-weight:500;
-    padding:8px 14px;
-    border-radius:8px;
-    cursor:pointer;
-    transition:background .2s ease, border-color .2s ease, color .2s ease;
-  }
-  .theme-toggle:hover{
-    border-color:var(--accent);
-    color:var(--ink);
-  }
-  .theme-toggle .icon{
-    font-size:14px;
-    line-height:1;
-  }
+  /* ── FOOTER ACTIONS ── */
+  footer.actions{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 60%,transparent);padding:20px 0 4px;display:flex;justify-content:flex-end;gap:10px;}
+  button.btn{font-family:var(--sans);font-size:13.5px;font-weight:600;padding:11px 22px;border-radius:8px;border:1px solid transparent;cursor:pointer;transition:background .15s;}
+  .btn-secondary{background:#16181c;border-color:#16181c;color:#fff;}
+  .btn-primary{background:#16181c;border-color:#16181c;color:#fff;}
+  .btn-primary:disabled{background:#7a7d83;border-color:#7a7d83;color:#fff;cursor:not-allowed;}
+  .btn-primary:not(:disabled):hover,.btn-secondary:hover{background:#2b2e34;}
+  html[data-theme="dark"] .btn-secondary{background:#fff;border-color:#fff;color:#16181c;}
+  html[data-theme="dark"] .btn-primary{background:#fff;border-color:#fff;color:#16181c;}
+  html[data-theme="dark"] .btn-primary:disabled{background:#5c5f66;border-color:#5c5f66;color:#1c1c1c;}
+  html[data-theme="dark"] .btn-primary:not(:disabled):hover,html[data-theme="dark"] .btn-secondary:hover{background:#d8dadf;}
 
-  .brand-block{
-    max-width:560px;
-  }
-  .brand-word{
-    font-family:'Poppins', var(--sans);
-    font-weight:800;
-    font-size:30px;
-    letter-spacing:-0.01em;
-    color:var(--ink);
-    margin-bottom:4px;
-  }
-  .brand-word .brand-accent{
-    color:#AD3374;
-  }
-  .brand-tagline{
-    font-family:var(--mono);
-    font-weight:500;
-    font-size:11.5px;
-    letter-spacing:2.6px;
-    text-transform:uppercase;
-    color:var(--ink-soft);
-    margin-bottom:20px;
-  }
-
-  @media (max-width: 620px){
-    .field-row{ grid-template-columns:1fr; gap:8px; }
-    section.module{ padding:20px; }
-  }
+  @media(max-width:620px){.field-row{grid-template-columns:1fr;gap:8px;}section.card{padding:18px;}h1{font-size:20px;}.module-selector button{padding:9px 14px;font-size:13px;}}
 </style>
 </head>
 <body>
-
 <div class="shell">
 
-  <header class="page">
-    <div class="header-row">
-      <div class="brand-block">
-        <div class="brand-word">Vector<span class="brand-accent">FLOW</span></div>
-        <div class="brand-tagline">Accelerating the supply chain</div>
-        <div class="eyebrow">Supply chain infra sizing</div>
-        <h1>Infrastructure requirements questionnaire</h1>
-        <p class="sub">Answer the fields below based on your current or planned operations. These inputs drive the sizing calculations used to generate your infrastructure document.</p>
-      </div>
-      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-        <span class="icon" id="themeIcon">&#9728;</span>
-        <span id="themeLabel">Light</span>
-      </button>
+  <!-- HEADER -->
+  <div class="header-row">
+    <div>
+      <div class="brand-word">Vector<span class="brand-accent">FLOW</span></div>
+      <div class="brand-tagline">Accelerating the supply chain</div>
+      <div class="eyebrow">Infrastructure Sizing</div>
+      <h1>Infrastructure Requirements Questionnaire</h1>
+      <p class="sub">Fill in the details below. Calculated fields update automatically based on your inputs.</p>
     </div>
-  </header>
+    <button type="button" class="theme-toggle" id="themeToggle">
+      <span id="themeIcon">&#9728;</span>
+      <span id="themeLabel">Light</span>
+    </button>
+  </div>
 
+  <!-- PROGRESS -->
   <div class="progress-wrap">
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-label">
@@ -421,231 +162,343 @@
 
   <form id="infraForm" novalidate>
 
-    <!-- MTA MODULE -->
-    <section class="module" data-module="mta">
-      <div class="module-head">
-        <span class="module-num">01</span>
-        <h2 class="module-title">MTA module</h2>
-      </div>
-      <p class="module-desc">Make-to-availability footprint — warehousing, plant, raw material and vendor scale.</p>
+    <!-- ── SECTION 1: PERSONAL INFO ── -->
+    <section class="card">
+      <div class="card-head"><span class="card-num">01</span><h2 class="card-title">Your Details</h2></div>
+      <p class="card-desc">Basic contact information for this submission.</p>
 
       <div class="field-row">
+        <div><label class="field-label" for="userName">Your Name</label></div>
         <div>
-          <label class="field-label" for="cwhCount">Total CWH / Warehouse / Dealer / Depot locations</label>
-          <div class="field-hint">Number of depot-type locations in scope.</div>
-        </div>
-        <div>
-          <input type="number" min="0" id="cwhCount" name="cwhCount" data-required placeholder="e.g. 40" inputmode="numeric">
-          <div class="error-text">Enter a number.</div>
+          <input type="text" id="userName" name="userName" data-required data-type="text" placeholder="Full name">
+          <div class="error-text">Please enter your name.</div>
         </div>
       </div>
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="fgSkuPerDepot">FG SKUs per depot</label>
-          <div class="field-hint">Approximate finished-goods SKU count per depot location.</div>
+          <label class="field-label" for="userEmail">Email ID</label>
+          <div class="field-hint">Must be a valid email address.</div>
         </div>
         <div>
-          <div class="unit-input">
-            <input type="number" min="0" id="fgSkuPerDepot" name="fgSkuPerDepot" data-required placeholder="e.g. 18500" inputmode="numeric">
-            <span class="unit">SKUs</span>
-          </div>
-          <div class="error-text">Enter a number.</div>
+          <input type="email" id="userEmail" name="userEmail" data-required data-type="email" placeholder="you@company.com">
+          <div class="error-text">Enter a valid email address.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div><label class="field-label" for="submissionDate">Date</label></div>
+        <div>
+          <input type="date" id="submissionDate" name="submissionDate" data-required data-type="date">
+          <div class="error-text">Please select a date.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 2: MODULE SELECTION ── -->
+    <section class="card">
+      <div class="card-head"><span class="card-num">02</span><h2 class="card-title">Module Selection</h2></div>
+      <p class="card-desc">Select the module(s) applicable to your operation.</p>
+      <div class="module-selector" id="moduleSelector" role="group">
+        <button type="button" data-value="mta">MTA</button>
+        <button type="button" data-value="mto">MTO</button>
+        <button type="button" data-value="both">MTA &amp; MTO</button>
+      </div>
+      <input type="hidden" id="moduleValue" name="moduleValue" value="">
+    </section>
+
+    <!-- ── SECTION 3: MTA ── -->
+    <section class="card hidden" id="mtaSection">
+      <div class="card-head"><span class="card-num">03</span><h2 class="card-title">MTA — Make to Availability</h2></div>
+      <p class="card-desc">Finished goods, raw materials, plant footprint and vendor scale.</p>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="f1">Number of FG SKUs / WIP</label>
+          <div class="field-hint">Finished goods and work-in-progress SKU count.</div>
+        </div>
+        <div>
+          <input type="number" id="f1" name="f1" class="mta-required" min="0" placeholder="e.g. 18500" inputmode="numeric">
+          <div class="error-text">Enter a number ≥ 0.</div>
         </div>
       </div>
 
       <div class="field-row">
         <div>
-          <label class="field-label">Total FG SKU-locations (computed)</label>
-          <div class="field-hint">Depot count × FG SKUs per depot.</div>
-        </div>
-        <div>
-          <div class="computed-banner">
-            <span>Total</span>
-            <strong id="totalFgSkuLoc">—</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="field-row">
-        <div>
-          <label class="field-label" for="plantSkuLoc">Total plant SKU-locations</label>
-          <div class="field-hint">Across all plant locations combined.</div>
-        </div>
-        <div>
-          <div class="unit-input">
-            <input type="number" min="0" id="plantSkuLoc" name="plantSkuLoc" data-required placeholder="e.g. 80000" inputmode="numeric">
-            <span class="unit">SKU-loc</span>
-          </div>
-          <div class="error-text">Enter a number.</div>
-        </div>
-      </div>
-
-      <div class="field-row">
-        <div>
-          <label class="field-label" for="plantCount">Number of plant locations</label>
-        </div>
-        <div>
-          <input type="number" min="0" id="plantCount" name="plantCount" data-required placeholder="e.g. 20" inputmode="numeric">
-          <div class="error-text">Enter a number.</div>
-        </div>
-      </div>
-
-      <div class="field-row">
-        <div>
-          <label class="field-label" for="rmSku">Total RM SKUs</label>
+          <label class="field-label" for="f2">Number of RM SKUs</label>
           <div class="field-hint">Raw material SKU count.</div>
         </div>
         <div>
-          <input type="number" min="0" id="rmSku" name="rmSku" data-required placeholder="e.g. 20000" inputmode="numeric">
-          <div class="error-text">Enter a number.</div>
+          <input type="number" id="f2" name="f2" class="mta-required" min="0" placeholder="e.g. 20000" inputmode="numeric">
+          <div class="error-text">Enter a number ≥ 0.</div>
         </div>
       </div>
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="vendorCount">Total vendors</label>
+          <label class="field-label" for="f3">Number of Plants / CWH / Depots</label>
+          <div class="field-hint">Total location count across all types.</div>
         </div>
         <div>
-          <input type="number" min="0" id="vendorCount" name="vendorCount" data-required placeholder="e.g. 600" inputmode="numeric">
-          <div class="error-text">Enter a number.</div>
+          <input type="number" id="f3" name="f3" class="mta-required" min="1" placeholder="e.g. 40" inputmode="numeric">
+          <div class="error-text">Enter a number > 0.</div>
         </div>
       </div>
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="skuPerVendor">Average SKU per vendor</label>
+          <label class="field-label">Total Number of SKUs</label>
+          <div class="field-sub">= FG SKUs + RM SKUs</div>
+        </div>
+        <div><div class="calc-field" id="f4">—</div></div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">Total SKU-Locations</label>
+          <div class="field-sub">= Total SKUs × Locations</div>
+        </div>
+        <div><div class="calc-field" id="f5">—</div></div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">Total Records Processed Daily</label>
+          <div class="field-sub">= SKU-Loc × 90 days (BTR retention)</div>
+        </div>
+        <div><div class="calc-field" id="f6">—</div></div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="f7">Number of Suppliers / Vendors</label>
         </div>
         <div>
-          <input type="number" min="0" id="skuPerVendor" name="skuPerVendor" data-required placeholder="e.g. 30" inputmode="numeric">
-          <div class="error-text">Enter a number.</div>
+          <input type="number" id="f7" name="f7" class="mta-required" min="1" placeholder="e.g. 600" inputmode="numeric">
+          <div class="error-text">Enter a number > 0.</div>
         </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="f8">Number of SKUs per Vendor</label>
+        </div>
+        <div>
+          <input type="number" id="f8" name="f8" class="mta-required" min="1" placeholder="e.g. 30" inputmode="numeric">
+          <div class="error-text">Enter a number > 0.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">Vendor Data Volume</label>
+          <div class="field-sub">= Vendors × SKUs per Vendor</div>
+        </div>
+        <div><div class="calc-field" id="f9">—</div></div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">Total Vendor Data Volume</label>
+          <div class="field-sub">= Vendor Data Volume × 90 days</div>
+        </div>
+        <div><div class="calc-field" id="f10">—</div></div>
+      </div>
+
+      <div class="summary-total" id="mtaSummary">
+        <div class="summary-total-label">Total Data VectorFLOW Will Process Daily</div>
+        <div class="summary-total-value" id="mtaTotal">—</div>
+        <div class="summary-total-sub">= (Daily Records ÷ 1M) + (Vendor Volume ÷ 1M) &nbsp;·&nbsp; in Millions</div>
       </div>
     </section>
 
-    <!-- MTO MODULE -->
-    <section class="module" data-module="mto">
-      <div class="module-head">
-        <span class="module-num">02</span>
-        <h2 class="module-title">MTO module</h2>
-      </div>
-      <p class="module-desc">Make-to-order volume and change request load.</p>
+    <!-- ── SECTION 4: MTO ── -->
+    <section class="card hidden" id="mtoSection">
+      <div class="card-head"><span class="card-num" id="mtoNum">04</span><h2 class="card-title">MTO — Make to Order</h2></div>
+      <p class="card-desc">Order volume, change requests, and optional BOM configuration.</p>
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="mtoOrdersPerDay">Total MTO orders per day</label>
+          <label class="field-label" for="f11">Total MTO Orders / Line Items per Day</label>
         </div>
         <div>
-          <div class="unit-input">
-            <input type="number" min="0" id="mtoOrdersPerDay" name="mtoOrdersPerDay" data-required placeholder="e.g. 200" inputmode="numeric">
-            <span class="unit">/ day</span>
-          </div>
-          <div class="error-text">Enter a number.</div>
+          <input type="number" id="f11" name="f11" class="mto-required" min="1" placeholder="e.g. 200" inputmode="numeric">
+          <div class="error-text">Enter a number > 0.</div>
         </div>
       </div>
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="ccrCount">Number of CCRs</label>
+          <label class="field-label" for="f12">Count of CCRs</label>
           <div class="field-hint">Customer change requests.</div>
         </div>
         <div>
-          <input type="number" min="0" id="ccrCount" name="ccrCount" data-required placeholder="e.g. 50" inputmode="numeric">
-          <div class="error-text">Enter a number.</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- INSTANCES MODULE -->
-    <section class="module" data-module="instances">
-      <div class="module-head">
-        <span class="module-num">03</span>
-        <h2 class="module-title">Instances</h2>
-      </div>
-      <p class="module-desc">Business-oriented number of BPRs / websites to be configured.</p>
-
-      <div class="field-row">
-        <div>
-          <label class="field-label" for="fgRmInstances">FG / RM / Spares / etc. instances</label>
-          <div class="field-hint">Number of business process region / website instances.</div>
-        </div>
-        <div>
-          <input type="number" min="0" id="fgRmInstances" name="fgRmInstances" data-required placeholder="e.g. 2" inputmode="numeric">
-          <div class="error-text">Enter a number.</div>
+          <input type="number" id="f12" name="f12" class="mto-required" min="1" placeholder="e.g. 50" inputmode="numeric">
+          <div class="error-text">Enter a number > 0.</div>
         </div>
       </div>
 
       <div class="field-row">
         <div>
-          <label class="field-label">BOM module required?</label>
-          <div class="field-hint">Bill of materials configuration in scope.</div>
+          <label class="field-label">Item-CCR Combo</label>
+          <div class="field-sub">= MTO Orders × CCRs</div>
+        </div>
+        <div><div class="calc-field" id="f13">—</div></div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">Trend Data for 90 Days</label>
+          <div class="field-sub">= Item-CCR Combo × 90</div>
+        </div>
+        <div><div class="calc-field" id="f14">—</div></div>
+      </div>
+
+      <!-- BOM TOGGLE -->
+      <div class="field-row">
+        <div>
+          <label class="field-label">BOM Module Included?</label>
+          <div class="field-hint">Bill of materials configuration in scope for MTO.</div>
         </div>
         <div>
-          <div class="toggle-group" id="bomToggle" role="group" aria-label="BOM module required">
+          <div class="pill-toggle" id="bomToggle">
             <button type="button" data-value="no" class="active">No</button>
             <button type="button" data-value="yes">Yes</button>
           </div>
-          <input type="hidden" id="bomRequired" name="bomRequired" value="no">
+          <input type="hidden" id="bomValue" name="bomValue" value="no">
         </div>
       </div>
 
-      <div class="conditional" id="bomConditional">
-        <div class="explain-note">
-          If more than one BOM instance is needed, briefly explain what drives that — e.g. separate BOM structures per business unit, region, or product line that can't share a single configuration.
-        </div>
+      <!-- BOM SUB-SECTION -->
+      <div id="bomSection" class="hidden" style="margin-top:18px;">
 
         <div class="field-row">
           <div>
-            <label class="field-label" for="bomInstanceCount">How many BOM instances</label>
+            <label class="field-label" for="f15">Number of RM SKUs</label>
           </div>
           <div>
-            <input type="number" min="1" id="bomInstanceCount" name="bomInstanceCount" placeholder="e.g. 1" inputmode="numeric">
-          </div>
-        </div>
-
-        <div class="field-row">
-          <div>
-            <label class="field-label" for="bomInstanceExplain">What would more than 1 instance entail?</label>
-          </div>
-          <div>
-            <textarea id="bomInstanceExplain" name="bomInstanceExplain" placeholder="Explain the driver, if more than one instance is needed"></textarea>
+            <input type="number" id="f15" name="f15" class="bom-required" min="1" placeholder="e.g. 20000" inputmode="numeric">
+            <div class="error-text">Enter a number > 0.</div>
           </div>
         </div>
 
         <div class="field-row">
           <div>
-            <label class="field-label" for="bomLevels">BOM levels in current system</label>
+            <label class="field-label">MTA BOR Orders (TOR+TOB+TOG) per Day</label>
+            <div class="field-sub">= RM SKUs × 3</div>
           </div>
-          <div>
-            <input type="number" min="0" id="bomLevels" name="bomLevels" placeholder="e.g. 8" inputmode="numeric">
-          </div>
+          <div><div class="calc-field" id="f16">—</div></div>
         </div>
 
         <div class="field-row">
           <div>
-            <label class="field-label" for="bomItemsPerLevel">Avg. items per BOM level</label>
+            <label class="field-label">Total MTO Orders / Line Items per Day</label>
+            <div class="field-sub">= MTO Orders (Field 11)</div>
           </div>
-          <div>
-            <input type="number" min="0" id="bomItemsPerLevel" name="bomItemsPerLevel" placeholder="e.g. 25" inputmode="numeric">
-          </div>
+          <div><div class="calc-field" id="f17">—</div></div>
         </div>
 
         <div class="field-row">
           <div>
-            <label class="field-label" for="bomNormsItems">BOM items/levels under norms (incl. SFG)</label>
+            <label class="field-label">Total Explosion Line Items for BOM</label>
+            <div class="field-sub">= BOR Orders + MTO Orders</div>
           </div>
-          <div>
-            <input type="number" min="0" id="bomNormsItems" name="bomNormsItems" placeholder="e.g. 75000" inputmode="numeric">
+          <div><div class="calc-field" id="f18">—</div></div>
+        </div>
+
+        <!-- BOM LEVELS SUBFORM -->
+        <div class="subform">
+          <div class="subform-title">Expected BOM Level</div>
+
+          <div class="field-row">
+            <div>
+              <label class="field-label" for="f19">Avg. Items per BOM Level</label>
+            </div>
+            <div>
+              <input type="number" id="f19" name="f19" class="bom-required" min="1" placeholder="e.g. 25" inputmode="numeric">
+              <div class="error-text">Enter a number > 0.</div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div>
+              <label class="field-label" for="f20">Number of BOM Levels</label>
+            </div>
+            <div>
+              <input type="number" id="f20" name="f20" class="bom-required" min="1" placeholder="e.g. 8" inputmode="numeric">
+              <div class="error-text">Enter a number > 0.</div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div>
+              <label class="field-label">Total Items in BOM Levels</label>
+              <div class="field-sub">= Avg. Items × Levels</div>
+            </div>
+            <div><div class="calc-field" id="f21">—</div></div>
+          </div>
+
+          <div class="field-row">
+            <div>
+              <label class="field-label">Line Items for Total Orders</label>
+              <div class="field-sub">= Explosion Line Items × Total BOM Items</div>
+            </div>
+            <div><div class="calc-field" id="f22">—</div></div>
           </div>
         </div>
+
+        <!-- PROCUREMENT TOGGLE -->
+        <div class="field-row">
+          <div>
+            <label class="field-label">Procurement Present?</label>
+            <div class="field-hint">If yes, full-kit data for 90 days will be included.</div>
+          </div>
+          <div>
+            <div class="pill-toggle" id="procToggle">
+              <button type="button" data-value="no" class="active">No</button>
+              <button type="button" data-value="yes">Yes</button>
+            </div>
+            <input type="hidden" id="procValue" name="procValue" value="no">
+          </div>
+        </div>
+
+        <div id="f23Row" class="field-row hidden">
+          <div>
+            <label class="field-label">Full-Kit for Last 90 Days</label>
+            <div class="field-sub">= Line Items for Total Orders × 90</div>
+          </div>
+          <div><div class="calc-field" id="f23">—</div></div>
+        </div>
+
+        <div class="summary-total" id="mtoSummary" style="margin-top:16px;">
+          <div class="summary-total-label">MTO Processing Total</div>
+          <div class="summary-total-value" id="mtoTotal">—</div>
+          <div class="summary-total-sub">= (Trend Data ÷ 1M) + (Full-Kit ÷ 1M) &nbsp;·&nbsp; in Millions</div>
+        </div>
+      </div>
+
+      <!-- MTO summary (no BOM) -->
+      <div class="summary-total hidden" id="mtoSummaryNoBom" style="margin-top:16px;">
+        <div class="summary-total-label">MTO Trend Data Total</div>
+        <div class="summary-total-value" id="mtoTotalNoBom">—</div>
+        <div class="summary-total-sub">= Trend Data for 90 Days ÷ 1M &nbsp;·&nbsp; in Millions</div>
       </div>
     </section>
 
-    <div class="summary-strip" id="summaryStrip"></div>
+    <!-- ── SECTION 5: GRAND TOTAL (MTA+MTO) ── -->
+    <section class="card hidden" id="grandSection">
+      <div class="card-head"><span class="card-num">05</span><h2 class="card-title">Combined Processing Total</h2></div>
+      <p class="card-desc">Aggregate data volume VectorFLOW will process daily across both modules.</p>
+      <div class="summary-total">
+        <div class="summary-total-label">Total Data VectorFLOW Will Process Daily</div>
+        <div class="summary-total-value" id="grandTotal">—</div>
+        <div class="summary-total-sub" id="grandFormula">= MTA + MTO components ÷ 1M &nbsp;·&nbsp; in Millions</div>
+      </div>
+    </section>
 
     <footer class="actions">
       <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
-      <button type="submit" class="btn btn-primary" id="submitBtn">Generate infra document</button>
+      <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Generate Infra Document</button>
     </footer>
 
   </form>
@@ -653,139 +506,282 @@
 
 <script>
 (function(){
-  const form = document.getElementById('infraForm');
-  const allInputs = () => Array.from(form.querySelectorAll('input[data-required]'));
 
-  // ---- theme toggle ----
-  const themeToggle = document.getElementById('themeToggle');
-  const themeIcon = document.getElementById('themeIcon');
-  const themeLabel = document.getElementById('themeLabel');
+  // ── THEME ──
   const root = document.documentElement;
-
-  function applyTheme(theme){
-    root.setAttribute('data-theme', theme);
-    if(theme === 'dark'){
-      themeIcon.innerHTML = '&#9789;';
-      themeLabel.textContent = 'Dark';
-    } else {
-      themeIcon.innerHTML = '&#9728;';
-      themeLabel.textContent = 'Light';
-    }
-    try{ localStorage.setItem('infraFormTheme', theme); }catch(e){}
+  function applyTheme(t){
+    root.setAttribute('data-theme',t);
+    document.getElementById('themeIcon').innerHTML = t==='dark'?'&#9789;':'&#9728;';
+    document.getElementById('themeLabel').textContent = t==='dark'?'Dark':'Light';
+    try{localStorage.setItem('vfTheme',t);}catch(e){}
   }
-
-  let savedTheme = null;
-  try{ savedTheme = localStorage.getItem('infraFormTheme'); }catch(e){}
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
-
-  themeToggle.addEventListener('click', () => {
-    const current = root.getAttribute('data-theme');
-    applyTheme(current === 'dark' ? 'light' : 'dark');
+  let saved; try{saved=localStorage.getItem('vfTheme');}catch(e){}
+  const prefersDark = window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved||(prefersDark?'dark':'light'));
+  document.getElementById('themeToggle').addEventListener('click',()=>{
+    applyTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');
   });
 
-  // ---- BOM toggle ----
-  const bomToggle = document.getElementById('bomToggle');
-  const bomRequired = document.getElementById('bomRequired');
-  const bomConditional = document.getElementById('bomConditional');
+  // ── MODULE SELECTOR ──
+  const moduleSelector = document.getElementById('moduleSelector');
+  const moduleValue = document.getElementById('moduleValue');
+  let activeModule = '';
 
-  bomToggle.addEventListener('click', (e) => {
+  moduleSelector.addEventListener('click',e=>{
     const btn = e.target.closest('button');
     if(!btn) return;
-    [...bomToggle.children].forEach(b => b.classList.remove('active'));
+    [...moduleSelector.children].forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    const val = btn.dataset.value;
-    bomRequired.value = val;
-    bomConditional.classList.toggle('show', val === 'yes');
+    activeModule = btn.dataset.value;
+    moduleValue.value = activeModule;
+    toggleSections();
+    updateProgress();
+    recalcAll();
+  });
+
+  function toggleSections(){
+    const mta = activeModule==='mta'||activeModule==='both';
+    const mto = activeModule==='mto'||activeModule==='both';
+    const both = activeModule==='both';
+    document.getElementById('mtaSection').classList.toggle('hidden',!mta);
+    document.getElementById('mtoSection').classList.toggle('hidden',!mto);
+    document.getElementById('grandSection').classList.toggle('hidden',!both);
+    document.getElementById('mtoNum').textContent = mta?'04':'03';
+    // update data-required for mta/mto fields
+    document.querySelectorAll('.mta-required').forEach(i=>{
+      i.dataset.required = mta?'true':'';
+      if(!mta){i.value='';i.classList.remove('has-error');}
+    });
+    document.querySelectorAll('.mto-required').forEach(i=>{
+      i.dataset.required = mto?'true':'';
+      if(!mto){i.value='';i.classList.remove('has-error');}
+    });
+    syncBomRequired();
+  }
+
+  // ── BOM TOGGLE ──
+  const bomToggle = document.getElementById('bomToggle');
+  const bomValue = document.getElementById('bomValue');
+  bomToggle.addEventListener('click',e=>{
+    const btn=e.target.closest('button'); if(!btn) return;
+    [...bomToggle.children].forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    bomValue.value=btn.dataset.value;
+    const show=btn.dataset.value==='yes';
+    document.getElementById('bomSection').classList.toggle('hidden',!show);
+    document.getElementById('mtoSummaryNoBom').classList.toggle('hidden',show);
+    syncBomRequired();
+    recalcAll();
     updateProgress();
   });
 
-  // ---- computed FG SKU-location total ----
-  const cwhCount = document.getElementById('cwhCount');
-  const fgSkuPerDepot = document.getElementById('fgSkuPerDepot');
-  const totalFgSkuLoc = document.getElementById('totalFgSkuLoc');
+  // ── PROCUREMENT TOGGLE ──
+  const procToggle = document.getElementById('procToggle');
+  const procValue = document.getElementById('procValue');
+  procToggle.addEventListener('click',e=>{
+    const btn=e.target.closest('button'); if(!btn) return;
+    [...procToggle.children].forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    procValue.value=btn.dataset.value;
+    document.getElementById('f23Row').classList.toggle('hidden',btn.dataset.value!=='yes');
+    recalcAll();
+  });
 
-  function updateComputed(){
-    const a = parseFloat(cwhCount.value);
-    const b = parseFloat(fgSkuPerDepot.value);
-    if(!isNaN(a) && !isNaN(b)){
-      totalFgSkuLoc.textContent = (a*b).toLocaleString();
-    } else {
-      totalFgSkuLoc.textContent = '—';
+  function syncBomRequired(){
+    const mto = activeModule==='mto'||activeModule==='both';
+    const bomOn = bomValue.value==='yes' && mto;
+    document.querySelectorAll('.bom-required').forEach(i=>{
+      i.dataset.required = bomOn?'true':'';
+      if(!bomOn){i.value='';i.classList.remove('has-error');}
+    });
+  }
+
+  // ── HELPERS ──
+  const num = id => parseFloat(document.getElementById(id).value)||0;
+  const fmt = n => n===0||isNaN(n)?'—':n.toLocaleString('en-IN');
+  const fmtM = n => isNaN(n)||n===0?'—':(n/1e6).toFixed(4)+' M';
+  function setCalc(id,val){
+    const el=document.getElementById(id);
+    el.textContent = (val===null||isNaN(val)||val===0)?'—':val.toLocaleString('en-IN');
+    return val;
+  }
+  function setCalcM(id,val){
+    const el=document.getElementById(id);
+    el.textContent = (val===null||isNaN(val))?'—':fmtM(val);
+    return val;
+  }
+
+  // ── RECALC ──
+  function recalcAll(){
+    const mta = activeModule==='mta'||activeModule==='both';
+    const mto = activeModule==='mto'||activeModule==='both';
+    const both = activeModule==='both';
+    const bomOn = bomValue.value==='yes';
+    const procOn = procValue.value==='yes';
+
+    let f6val=0, f10val=0, f14val=0, f23val=0;
+
+    if(mta){
+      const f1=num('f1'), f2=num('f2'), f3=num('f3'), f7=num('f7'), f8=num('f8');
+      const f4=f1+f2; setCalc('f4',f4);
+      const f5=f4*f3; setCalc('f5',f5);
+      f6val=f5*90; setCalc('f6',f6val);
+      const f9=f7*f8; setCalc('f9',f9);
+      f10val=f9*90; setCalc('f10',f10val);
+      const sv = (f6val/1e6)+(f10val/1e6);
+      document.getElementById('mtaTotal').textContent = (f6val||f10val)?sv.toFixed(4)+' M':'—';
+    }
+
+    if(mto){
+      const f11=num('f11'), f12=num('f12');
+      const f13=f11*f12; setCalc('f13',f13);
+      f14val=f13*90; setCalc('f14',f14val);
+
+      if(bomOn){
+        const f15=num('f15');
+        const f16=f15*3; setCalc('f16',f16);
+        setCalc('f17',f11);
+        const f18=f16+f11; setCalc('f18',f18);
+        const f19=num('f19'), f20=num('f20');
+        const f21=f19*f20; setCalc('f21',f21);
+        const f22=f18*f21; setCalc('f22',f22);
+        if(procOn){ f23val=f22*90; setCalc('f23',f23val); }
+        const sv1=(f14val/1e6)+(f23val/1e6);
+        document.getElementById('mtoTotal').textContent=(f14val||f23val)?sv1.toFixed(4)+' M':'—';
+        document.getElementById('mtoSummary').classList.remove('hidden');
+      } else {
+        document.getElementById('mtoSummaryNoBom').classList.remove('hidden');
+        document.getElementById('mtoTotalNoBom').textContent = f14val?(f14val/1e6).toFixed(4)+' M':'—';
+        document.getElementById('mtoSummary').classList.add('hidden');
+      }
+    }
+
+    if(both){
+      const sv2=(f6val/1e6)+(f10val/1e6)+(f14val/1e6)+(f23val/1e6);
+      document.getElementById('grandTotal').textContent=(sv2>0)?sv2.toFixed(4)+' M':'—';
+      let parts=[];
+      if(f6val) parts.push('Daily Records ÷ 1M');
+      if(f10val) parts.push('Vendor Volume ÷ 1M');
+      if(f14val) parts.push('MTO Trend ÷ 1M');
+      if(f23val) parts.push('Full-Kit ÷ 1M');
+      document.getElementById('grandFormula').textContent='= '+parts.join(' + ')+' · in Millions';
     }
   }
-  cwhCount.addEventListener('input', () => { updateComputed(); updateProgress(); });
-  fgSkuPerDepot.addEventListener('input', () => { updateComputed(); updateProgress(); });
 
-  // ---- validation ----
-  function validateField(input){
-    const wrap = input.closest('div');
-    const errEl = wrap.parentElement.querySelector('.error-text') || wrap.querySelector('.error-text');
-    const val = input.value.trim();
-    const valid = val !== '' && !isNaN(val) && Number(val) >= 0;
-    input.classList.toggle('has-error', !valid && val !== '');
-    if(errEl) errEl.classList.toggle('show', !valid && val !== '');
+  // ── VALIDATION ──
+  function validateField(inp){
+    const errEl = inp.parentElement.querySelector('.error-text');
+    const val = inp.value.trim();
+    let valid = false;
+    const type = inp.dataset.type||'number';
+    if(type==='text') valid = val.length>0;
+    else if(type==='email') valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    else if(type==='date') valid = val.length>0;
+    else{
+      const n=parseFloat(val);
+      const min=parseFloat(inp.min);
+      valid = val!==''&&!isNaN(n)&&(isNaN(min)||n>=min);
+    }
+    inp.classList.toggle('has-error',!valid&&val!=='');
+    if(errEl) errEl.classList.toggle('show',!valid&&val!=='');
     return valid;
   }
 
-  allInputs().forEach(inp => {
-    inp.addEventListener('blur', () => validateField(inp));
-    inp.addEventListener('input', () => {
-      if(inp.classList.contains('has-error')) validateField(inp);
-      updateProgress();
-    });
-  });
-
-  // ---- progress ----
-  const progressFill = document.getElementById('progressFill');
-  const progressText = document.getElementById('progressText');
-  const progressPct = document.getElementById('progressPct');
-  const submitBtn = document.getElementById('submitBtn');
-
-  function updateProgress(){
-    const required = allInputs();
-    const filled = required.filter(i => i.value.trim() !== '' && !isNaN(i.value));
-    const pct = required.length ? Math.round((filled.length/required.length)*100) : 0;
-    progressFill.style.width = pct + '%';
-    progressText.textContent = filled.length + ' of ' + required.length + ' fields completed';
-    progressPct.textContent = pct + '%';
-    submitBtn.disabled = filled.length !== required.length;
+  // ── PROGRESS ──
+  function getRequiredInputs(){
+    return Array.from(document.querySelectorAll('input[data-required="true"],input[data-required=""]'))
+      .filter(i=>i.dataset.required==='true'||i.hasAttribute('data-required'))
+      .filter(i=>i.closest('section:not(.hidden)')!==null||i.id==='userName'||i.id==='userEmail'||i.id==='submissionDate');
   }
 
-  // ---- reset ----
-  document.getElementById('resetBtn').addEventListener('click', () => {
-    form.reset();
-    [...bomToggle.children].forEach(b => b.classList.remove('active'));
+  function allRequiredInputs(){
+    const base = ['userName','userEmail','submissionDate'];
+    const mta = activeModule==='mta'||activeModule==='both';
+    const mto = activeModule==='mto'||activeModule==='both';
+    const bomOn = bomValue.value==='yes';
+    let ids=[...base];
+    if(mta) ids.push('f1','f2','f3','f7','f8');
+    if(mto) ids.push('f11','f12');
+    if(mto&&bomOn) ids.push('f15','f19','f20');
+    return ids.map(id=>document.getElementById(id)).filter(Boolean);
+  }
+
+  function updateProgress(){
+    const inputs = allRequiredInputs();
+    const filled = inputs.filter(i=>{
+      const v=i.value.trim();
+      if(!v) return false;
+      const type=i.dataset.type||'number';
+      if(type==='text') return v.length>0;
+      if(type==='email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      if(type==='date') return v.length>0;
+      return !isNaN(parseFloat(v));
+    });
+    const pct=inputs.length?Math.round(filled.length/inputs.length*100):0;
+    document.getElementById('progressFill').style.width=pct+'%';
+    document.getElementById('progressText').textContent=filled.length+' of '+inputs.length+' fields completed';
+    document.getElementById('progressPct').textContent=pct+'%';
+    // also require module selected
+    const ready = filled.length===inputs.length&&activeModule!=='';
+    document.getElementById('submitBtn').disabled=!ready;
+  }
+
+  // bind input events
+  document.getElementById('infraForm').addEventListener('input',e=>{
+    const inp=e.target;
+    if(inp.tagName==='INPUT'&&!inp.type==='hidden'){
+      if(inp.classList.contains('has-error')) validateField(inp);
+      recalcAll();
+      updateProgress();
+    }
+  });
+  document.getElementById('infraForm').addEventListener('blur',e=>{
+    if(e.target.tagName==='INPUT') validateField(e.target);
+  },true);
+
+  // ── RESET ──
+  document.getElementById('resetBtn').addEventListener('click',()=>{
+    document.getElementById('infraForm').reset();
+    activeModule=''; moduleValue.value='';
+    [...moduleSelector.children].forEach(b=>b.classList.remove('active'));
+    bomValue.value='no';
+    [...bomToggle.children].forEach(b=>b.classList.remove('active'));
     bomToggle.children[0].classList.add('active');
-    bomRequired.value = 'no';
-    bomConditional.classList.remove('show');
-    totalFgSkuLoc.textContent = '—';
-    form.querySelectorAll('.has-error').forEach(i => i.classList.remove('has-error'));
-    form.querySelectorAll('.error-text.show').forEach(e => e.classList.remove('show'));
+    procValue.value='no';
+    [...procToggle.children].forEach(b=>b.classList.remove('active'));
+    procToggle.children[0].classList.add('active');
+    document.getElementById('bomSection').classList.add('hidden');
+    document.getElementById('f23Row').classList.add('hidden');
+    document.getElementById('mtoSummaryNoBom').classList.add('hidden');
+    document.querySelectorAll('.has-error').forEach(i=>i.classList.remove('has-error'));
+    document.querySelectorAll('.error-text.show').forEach(e=>e.classList.remove('show'));
+    document.querySelectorAll('.calc-field').forEach(el=>el.textContent='—');
+    document.querySelectorAll('.summary-total-value').forEach(el=>el.textContent='—');
+    toggleSections();
     updateProgress();
   });
 
-  // ---- submit ----
-  form.addEventListener('submit', (e) => {
+  // ── SUBMIT ──
+  document.getElementById('infraForm').addEventListener('submit',e=>{
     e.preventDefault();
-    const required = allInputs();
-    let allValid = true;
-    required.forEach(inp => { if(!validateField(inp)) allValid = false; });
-    if(!allValid){ updateProgress(); return; }
-
-    const data = {};
-    new FormData(form).forEach((value, key) => { data[key] = value; });
-    data.totalFgSkuLocComputed = (parseFloat(cwhCount.value) || 0) * (parseFloat(fgSkuPerDepot.value) || 0);
-
-    // Placeholder: this is where the payload gets POSTed to the API server
-    // for validation, archiving, calculation, and xlsx generation.
-    console.log('Form payload', data);
-    alert('Form is valid. Payload logged to console — ready to wire to the API server.');
+    if(!activeModule){alert('Please select a module (MTA, MTO, or MTA & MTO).');return;}
+    const inputs=allRequiredInputs();
+    let allValid=true;
+    inputs.forEach(i=>{if(!validateField(i)) allValid=false;});
+    if(!allValid){updateProgress();return;}
+    const payload={};
+    new FormData(document.getElementById('infraForm')).forEach((v,k)=>payload[k]=v);
+    console.log('Payload ready:',payload);
+    alert('Form validated — payload logged to console. Ready to submit to API.');
   });
 
+  // ── SET TODAY'S DATE AS DEFAULT ──
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('submissionDate').value=today;
+
+  toggleSections();
   updateProgress();
 })();
 </script>
-
 </body>
 </html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infra Sizing Questionnaire</title>
+<link rel="icon" type="image/png" href="Favicon White.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c2230;
+    --ink-soft:#5b6472;
+    --line:#dde1e7;
+    --line-soft:#eceff3;
+    --bg:#f6f7f9;
+    --panel:#ffffff;
+    --accent:#2c5f6e;
+    --accent-soft:#e6eef0;
+    --accent-deep:#1d4350;
+    --warn-bg:#fbf3e6;
+    --warn-line:#e9c98d;
+    --warn-text:#7a5414;
+    --radius:10px;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  html[data-theme="dark"]{
+    --ink:#e8eaee;
+    --ink-soft:#9aa3b0;
+    --line:#323a47;
+    --line-soft:#272d38;
+    --bg:#161a20;
+    --panel:#1e242c;
+    --accent:#5fa6b8;
+    --accent-soft:#243640;
+    --accent-deep:#7cc0d1;
+    --warn-bg:#3a3120;
+    --warn-line:#6b5526;
+    --warn-text:#e3bd72;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.5;
+    transition:background .2s ease, color .2s ease;
+  }
+  .shell{
+    max-width:880px;
+    margin:0 auto;
+    padding:40px 24px 120px;
+  }
+  header.page{
+    margin-bottom:32px;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:8px;
+  }
+  h1{
+    font-size:26px;
+    font-weight:600;
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+  }
+  .sub{
+    color:var(--ink-soft);
+    font-size:14.5px;
+    max-width:60ch;
+  }
+
+  /* progress */
+  .progress-wrap{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:var(--bg);
+    padding:14px 0 18px;
+    margin-bottom:8px;
+  }
+  .progress-track{
+    height:6px;
+    background:var(--line-soft);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:#AD3374;
+    width:0%;
+    transition:width .25s ease;
+  }
+  .progress-label{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:6px;
+    display:flex;
+    justify-content:space-between;
+  }
+
+  section.module{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px 28px 30px;
+    margin-bottom:20px;
+    transition:background .2s ease, border-color .2s ease;
+  }
+  .module-head{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:4px;
+  }
+  .module-num{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--accent);
+    border:1px solid var(--accent-soft);
+    background:var(--accent-soft);
+    border-radius:5px;
+    padding:2px 7px;
+  }
+  .module-title{
+    font-size:17px;
+    font-weight:600;
+    margin:0;
+  }
+  .module-desc{
+    color:var(--ink-soft);
+    font-size:13.5px;
+    margin:6px 0 22px;
+  }
+
+  .field-row{
+    display:grid;
+    grid-template-columns:1fr 200px;
+    gap:18px;
+    align-items:start;
+    padding:14px 0;
+    border-top:1px solid var(--line-soft);
+  }
+  .field-row:first-of-type{ border-top:none; padding-top:0; }
+
+  label.field-label{
+    font-size:14px;
+    font-weight:500;
+    color:var(--ink);
+    display:block;
+  }
+  .field-hint{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:3px;
+    max-width:46ch;
+  }
+
+  input[type=text], input[type=number], textarea{
+    width:100%;
+    padding:9px 11px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-size:14px;
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--panel);
+    transition:border-color .15s, box-shadow .15s, background .2s ease;
+  }
+  textarea{ resize:vertical; min-height:64px; }
+  input:focus, textarea:focus, select:focus{
+    outline:none;
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft);
+  }
+  input.has-error{
+    border-color:#c14a3a;
+  }
+  .error-text{
+    font-size:12px;
+    color:#c14a3a;
+    margin-top:4px;
+    display:none;
+  }
+  .error-text.show{ display:block; }
+
+  .unit-input{
+    position:relative;
+  }
+  .unit-input .unit{
+    position:absolute;
+    right:11px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:12.5px;
+    color:var(--ink-soft);
+    pointer-events:none;
+  }
+  .unit-input input{ padding-right:64px; }
+
+  /* toggle (yes/no) */
+  .toggle-group{
+    display:inline-flex;
+    border:1px solid var(--line);
+    border-radius:7px;
+    overflow:hidden;
+  }
+  .toggle-group button{
+    border:none;
+    background:var(--panel);
+    font-family:var(--sans);
+    font-size:13.5px;
+    font-weight:500;
+    padding:8px 18px;
+    cursor:pointer;
+    color:var(--ink-soft);
+    transition:background .15s, color .15s;
+  }
+  .toggle-group button + button{ border-left:1px solid var(--line); }
+  .toggle-group button.active{
+    background:var(--accent);
+    color:#fff;
+  }
+
+  .conditional{
+    margin-top:18px;
+    padding:18px;
+    background:var(--accent-soft);
+    border:1px solid var(--line);
+    border-radius:8px;
+    display:none;
+  }
+  .conditional.show{ display:block; }
+  .conditional .field-row:first-of-type{ padding-top:0; }
+  .conditional .field-row{ border-top:1px solid var(--line); }
+  .conditional > .field-row:first-child{ border-top:none; }
+
+  .explain-note{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    background:var(--panel);
+    border:1px solid var(--line-soft);
+    border-radius:6px;
+    padding:10px 12px;
+    margin-bottom:16px;
+  }
+
+  .computed-banner{
+    background:var(--warn-bg);
+    border:1px solid var(--warn-line);
+    color:var(--warn-text);
+    font-size:12.5px;
+    border-radius:7px;
+    padding:10px 12px;
+    margin-top:6px;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .computed-banner strong{ font-family:var(--mono); }
+
+  footer.actions{
+    position:sticky;
+    bottom:0;
+    background:linear-gradient(to top, var(--bg) 60%, transparent);
+    padding:24px 0 4px;
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+  }
+  button.btn{
+    font-family:var(--sans);
+    font-size:14px;
+    font-weight:600;
+    padding:11px 22px;
+    border-radius:8px;
+    border:1px solid transparent;
+    cursor:pointer;
+  }
+  .btn-secondary{
+    background:#16181c;
+    border-color:#16181c;
+    color:#ffffff;
+  }
+  .btn-primary{
+    background:#16181c;
+    border-color:#16181c;
+    color:#ffffff;
+  }
+  .btn-primary:disabled{
+    background:#7a7d83;
+    border-color:#7a7d83;
+    color:#ffffff;
+    cursor:not-allowed;
+  }
+  .btn-primary:not(:disabled):hover{ background:#2b2e34; }
+  .btn-secondary:hover{ background:#2b2e34; }
+
+  html[data-theme="dark"] .btn-secondary{
+    background:#ffffff;
+    border-color:#ffffff;
+    color:#16181c;
+  }
+  html[data-theme="dark"] .btn-primary{
+    background:#ffffff;
+    border-color:#ffffff;
+    color:#16181c;
+  }
+  html[data-theme="dark"] .btn-primary:disabled{
+    background:#5c5f66;
+    border-color:#5c5f66;
+    color:#1c1c1c;
+  }
+  html[data-theme="dark"] .btn-primary:not(:disabled):hover{ background:#d8dadf; }
+  html[data-theme="dark"] .btn-secondary:hover{ background:#d8dadf; }
+
+  .summary-strip{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-soft);
+    text-align:right;
+    margin-bottom:8px;
+  }
+
+  .header-row{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .theme-toggle{
+    flex-shrink:0;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--ink-soft);
+    font-family:var(--sans);
+    font-size:13px;
+    font-weight:500;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .theme-toggle:hover{
+    border-color:var(--accent);
+    color:var(--ink);
+  }
+  .theme-toggle .icon{
+    font-size:14px;
+    line-height:1;
+  }
+
+  .brand-block{
+    max-width:560px;
+  }
+  .brand-word{
+    font-family:'Poppins', var(--sans);
+    font-weight:800;
+    font-size:30px;
+    letter-spacing:-0.01em;
+    color:var(--ink);
+    margin-bottom:4px;
+  }
+  .brand-word .brand-accent{
+    color:#AD3374;
+  }
+  .brand-tagline{
+    font-family:var(--mono);
+    font-weight:500;
+    font-size:11.5px;
+    letter-spacing:2.6px;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:20px;
+  }
+
+  @media (max-width: 620px){
+    .field-row{ grid-template-columns:1fr; gap:8px; }
+    section.module{ padding:20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <header class="page">
+    <div class="header-row">
+      <div class="brand-block">
+        <div class="brand-word">Vector<span class="brand-accent">FLOW</span></div>
+        <div class="brand-tagline">Accelerating the supply chain</div>
+        <div class="eyebrow">Supply chain infra sizing</div>
+        <h1>Infrastructure requirements questionnaire</h1>
+        <p class="sub">Answer the fields below based on your current or planned operations. These inputs drive the sizing calculations used to generate your infrastructure document.</p>
+      </div>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <span class="icon" id="themeIcon">&#9728;</span>
+        <span id="themeLabel">Light</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label">
+      <span id="progressText">0 of 0 fields completed</span>
+      <span id="progressPct">0%</span>
+    </div>
+  </div>
+
+  <form id="infraForm" novalidate>
+
+    <!-- MTA MODULE -->
+    <section class="module" data-module="mta">
+      <div class="module-head">
+        <span class="module-num">01</span>
+        <h2 class="module-title">MTA module</h2>
+      </div>
+      <p class="module-desc">Make-to-availability footprint — warehousing, plant, raw material and vendor scale.</p>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="cwhCount">Total CWH / Warehouse / Dealer / Depot locations</label>
+          <div class="field-hint">Number of depot-type locations in scope.</div>
+        </div>
+        <div>
+          <input type="number" min="0" id="cwhCount" name="cwhCount" data-required placeholder="e.g. 40" inputmode="numeric">
+          <div class="error-text">Enter a number.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="fgSkuPerDepot">FG SKUs per depot</label>
+          <div class="field-hint">Approximate finished-goods SKU count per depot location.</div>
+        </div>
+        <div>
+          <div class="unit-input">
+            <input type="number" min="0" id="fgSkuPerDepot" name="fgSkuPerDepot" data-required placeholder="e.g. 18500" inputmode="numeric">
+            <span class="unit">SKUs</span>
+          </div>
+          <div class="error-text">Enter a number.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">Total FG SKU-locations (computed)</label>
+          <div class="field-hint">Depot count × FG SKUs per depot.</div>
+        </div>
+        <div>
+          <div class="computed-banner">
+            <span>Total</span>
+            <strong id="totalFgSkuLoc">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="plantSkuLoc">Total plant SKU-locations</label>
+          <div class="field-hint">Across all plant locations combined.</div>
+        </div>
+        <div>
+          <div class="unit-input">
+            <input type="number" min="0" id="plantSkuLoc" name="plantSkuLoc" data-required placeholder="e.g. 80000" inputmode="numeric">
+            <span class="unit">SKU-loc</span>
+          </div>
+          <div class="error-text">Enter a number.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="plantCount">Number of plant locations</label>
+        </div>
+        <div>
+          <input type="number" min="0" id="plantCount" name="plantCount" data-required placeholder="e.g. 20" inputmode="numeric">
+          <div class="error-text">Enter a number.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="rmSku">Total RM SKUs</label>
+          <div class="field-hint">Raw material SKU count.</div>
+        </div>
+        <div>
+          <input type="number" min="0" id="rmSku" name="rmSku" data-required placeholder="e.g. 20000" inputmode="numeric">
+          <div class="error-text">Enter a number.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="vendorCount">Total vendors</label>
+        </div>
+        <div>
+          <input type="number" min="0" id="vendorCount" name="vendorCount" data-required placeholder="e.g. 600" inputmode="numeric">
+          <div class="error-text">Enter a number.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="skuPerVendor">Average SKU per vendor</label>
+        </div>
+        <div>
+          <input type="number" min="0" id="skuPerVendor" name="skuPerVendor" data-required placeholder="e.g. 30" inputmode="numeric">
+          <div class="error-text">Enter a number.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MTO MODULE -->
+    <section class="module" data-module="mto">
+      <div class="module-head">
+        <span class="module-num">02</span>
+        <h2 class="module-title">MTO module</h2>
+      </div>
+      <p class="module-desc">Make-to-order volume and change request load.</p>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="mtoOrdersPerDay">Total MTO orders per day</label>
+        </div>
+        <div>
+          <div class="unit-input">
+            <input type="number" min="0" id="mtoOrdersPerDay" name="mtoOrdersPerDay" data-required placeholder="e.g. 200" inputmode="numeric">
+            <span class="unit">/ day</span>
+          </div>
+          <div class="error-text">Enter a number.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="ccrCount">Number of CCRs</label>
+          <div class="field-hint">Customer change requests.</div>
+        </div>
+        <div>
+          <input type="number" min="0" id="ccrCount" name="ccrCount" data-required placeholder="e.g. 50" inputmode="numeric">
+          <div class="error-text">Enter a number.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTANCES MODULE -->
+    <section class="module" data-module="instances">
+      <div class="module-head">
+        <span class="module-num">03</span>
+        <h2 class="module-title">Instances</h2>
+      </div>
+      <p class="module-desc">Business-oriented number of BPRs / websites to be configured.</p>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="fgRmInstances">FG / RM / Spares / etc. instances</label>
+          <div class="field-hint">Number of business process region / website instances.</div>
+        </div>
+        <div>
+          <input type="number" min="0" id="fgRmInstances" name="fgRmInstances" data-required placeholder="e.g. 2" inputmode="numeric">
+          <div class="error-text">Enter a number.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label">BOM module required?</label>
+          <div class="field-hint">Bill of materials configuration in scope.</div>
+        </div>
+        <div>
+          <div class="toggle-group" id="bomToggle" role="group" aria-label="BOM module required">
+            <button type="button" data-value="no" class="active">No</button>
+            <button type="button" data-value="yes">Yes</button>
+          </div>
+          <input type="hidden" id="bomRequired" name="bomRequired" value="no">
+        </div>
+      </div>
+
+      <div class="conditional" id="bomConditional">
+        <div class="explain-note">
+          If more than one BOM instance is needed, briefly explain what drives that — e.g. separate BOM structures per business unit, region, or product line that can't share a single configuration.
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="bomInstanceCount">How many BOM instances</label>
+          </div>
+          <div>
+            <input type="number" min="1" id="bomInstanceCount" name="bomInstanceCount" placeholder="e.g. 1" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="bomInstanceExplain">What would more than 1 instance entail?</label>
+          </div>
+          <div>
+            <textarea id="bomInstanceExplain" name="bomInstanceExplain" placeholder="Explain the driver, if more than one instance is needed"></textarea>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="bomLevels">BOM levels in current system</label>
+          </div>
+          <div>
+            <input type="number" min="0" id="bomLevels" name="bomLevels" placeholder="e.g. 8" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="bomItemsPerLevel">Avg. items per BOM level</label>
+          </div>
+          <div>
+            <input type="number" min="0" id="bomItemsPerLevel" name="bomItemsPerLevel" placeholder="e.g. 25" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label class="field-label" for="bomNormsItems">BOM items/levels under norms (incl. SFG)</label>
+          </div>
+          <div>
+            <input type="number" min="0" id="bomNormsItems" name="bomNormsItems" placeholder="e.g. 75000" inputmode="numeric">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="summary-strip" id="summaryStrip"></div>
+
+    <footer class="actions">
+      <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
+      <button type="submit" class="btn btn-primary" id="submitBtn">Generate infra document</button>
+    </footer>
+
+  </form>
+</div>
+
+<script>
+(function(){
+  const form = document.getElementById('infraForm');
+  const allInputs = () => Array.from(form.querySelectorAll('input[data-required]'));
+
+  // ---- theme toggle ----
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeLabel = document.getElementById('themeLabel');
+  const root = document.documentElement;
+
+  function applyTheme(theme){
+    root.setAttribute('data-theme', theme);
+    if(theme === 'dark'){
+      themeIcon.innerHTML = '&#9789;';
+      themeLabel.textContent = 'Dark';
+    } else {
+      themeIcon.innerHTML = '&#9728;';
+      themeLabel.textContent = 'Light';
+    }
+    try{ localStorage.setItem('infraFormTheme', theme); }catch(e){}
+  }
+
+  let savedTheme = null;
+  try{ savedTheme = localStorage.getItem('infraFormTheme'); }catch(e){}
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+
+  themeToggle.addEventListener('click', () => {
+    const current = root.getAttribute('data-theme');
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
+
+  // ---- BOM toggle ----
+  const bomToggle = document.getElementById('bomToggle');
+  const bomRequired = document.getElementById('bomRequired');
+  const bomConditional = document.getElementById('bomConditional');
+
+  bomToggle.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    [...bomToggle.children].forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const val = btn.dataset.value;
+    bomRequired.value = val;
+    bomConditional.classList.toggle('show', val === 'yes');
+    updateProgress();
+  });
+
+  // ---- computed FG SKU-location total ----
+  const cwhCount = document.getElementById('cwhCount');
+  const fgSkuPerDepot = document.getElementById('fgSkuPerDepot');
+  const totalFgSkuLoc = document.getElementById('totalFgSkuLoc');
+
+  function updateComputed(){
+    const a = parseFloat(cwhCount.value);
+    const b = parseFloat(fgSkuPerDepot.value);
+    if(!isNaN(a) && !isNaN(b)){
+      totalFgSkuLoc.textContent = (a*b).toLocaleString();
+    } else {
+      totalFgSkuLoc.textContent = '—';
+    }
+  }
+  cwhCount.addEventListener('input', () => { updateComputed(); updateProgress(); });
+  fgSkuPerDepot.addEventListener('input', () => { updateComputed(); updateProgress(); });
+
+  // ---- validation ----
+  function validateField(input){
+    const wrap = input.closest('div');
+    const errEl = wrap.parentElement.querySelector('.error-text') || wrap.querySelector('.error-text');
+    const val = input.value.trim();
+    const valid = val !== '' && !isNaN(val) && Number(val) >= 0;
+    input.classList.toggle('has-error', !valid && val !== '');
+    if(errEl) errEl.classList.toggle('show', !valid && val !== '');
+    return valid;
+  }
+
+  allInputs().forEach(inp => {
+    inp.addEventListener('blur', () => validateField(inp));
+    inp.addEventListener('input', () => {
+      if(inp.classList.contains('has-error')) validateField(inp);
+      updateProgress();
+    });
+  });
+
+  // ---- progress ----
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  const progressPct = document.getElementById('progressPct');
+  const submitBtn = document.getElementById('submitBtn');
+
+  function updateProgress(){
+    const required = allInputs();
+    const filled = required.filter(i => i.value.trim() !== '' && !isNaN(i.value));
+    const pct = required.length ? Math.round((filled.length/required.length)*100) : 0;
+    progressFill.style.width = pct + '%';
+    progressText.textContent = filled.length + ' of ' + required.length + ' fields completed';
+    progressPct.textContent = pct + '%';
+    submitBtn.disabled = filled.length !== required.length;
+  }
+
+  // ---- reset ----
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    form.reset();
+    [...bomToggle.children].forEach(b => b.classList.remove('active'));
+    bomToggle.children[0].classList.add('active');
+    bomRequired.value = 'no';
+    bomConditional.classList.remove('show');
+    totalFgSkuLoc.textContent = '—';
+    form.querySelectorAll('.has-error').forEach(i => i.classList.remove('has-error'));
+    form.querySelectorAll('.error-text.show').forEach(e => e.classList.remove('show'));
+    updateProgress();
+  });
+
+  // ---- submit ----
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const required = allInputs();
+    let allValid = true;
+    required.forEach(inp => { if(!validateField(inp)) allValid = false; });
+    if(!allValid){ updateProgress(); return; }
+
+    const data = {};
+    new FormData(form).forEach((value, key) => { data[key] = value; });
+    data.totalFgSkuLocComputed = (parseFloat(cwhCount.value) || 0) * (parseFloat(fgSkuPerDepot.value) || 0);
+
+    // Placeholder: this is where the payload gets POSTed to the API server
+    // for validation, archiving, calculation, and xlsx generation.
+    console.log('Form payload', data);
+    alert('Form is valid. Payload logged to console — ready to wire to the API server.');
+  });
+
+  updateProgress();
+})();
+</script>
+
+</body>
+</html>

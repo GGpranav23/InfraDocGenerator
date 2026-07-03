@@ -729,7 +729,7 @@
   // bind input events
   document.getElementById('infraForm').addEventListener('input',e=>{
     const inp=e.target;
-    if(inp.tagName==='INPUT'&&!inp.type==='hidden'){
+    if(inp.tagName==='INPUT'&&inp.type!=='hidden'){
       if(inp.classList.contains('has-error')) validateField(inp);
       recalcAll();
       updateProgress();

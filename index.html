@@ -131,6 +131,53 @@
   html[data-theme="dark"] .btn-primary:not(:disabled):hover,html[data-theme="dark"] .btn-secondary:hover{background:#d8dadf;}
 
   @media(max-width:620px){.field-row{grid-template-columns:1fr;gap:8px;}section.card{padding:18px;}h1{font-size:20px;}.module-selector button{padding:9px 14px;font-size:13px;}}
+
+  /* ── PAGE FOOTER ── */
+  .page-footer{
+    margin-top:48px;
+    padding:28px 0 12px;
+    border-top:1px solid var(--line);
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
+  .page-footer-brand{
+    font-family:'Montserrat',var(--sans);
+    font-weight:800;
+    font-size:17px;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+    margin-bottom:2px;
+  }
+  .page-footer-brand span{ color:#AD3374; }
+  .page-footer-copy{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+  }
+  .page-footer-conf{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    max-width:52ch;
+    line-height:1.5;
+  }
+  .page-footer-dev{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    max-width:58ch;
+    line-height:1.6;
+    padding-top:4px;
+    border-top:1px solid var(--line-soft);
+    width:100%;
+  }
+  .page-footer-dev a{
+    color:#AD3374;
+    text-decoration:none;
+    font-weight:500;
+  }
+  .page-footer-dev a:hover{ text-decoration:underline; }
 </style>
 </head>
 <body>
@@ -170,8 +217,8 @@
       <div class="field-row">
         <div><label class="field-label" for="userName">Your Name</label></div>
         <div>
-          <input type="text" id="userName" name="userName" data-required data-type="text" placeholder="Full name">
-          <div class="error-text">Please enter your name.</div>
+          <input type="text" id="userName" name="userName" data-required data-type="name" placeholder="Full name">
+          <div class="error-text">Name must be at least 2 characters and contain only letters, spaces, hyphens or apostrophes.</div>
         </div>
       </div>
 
@@ -183,6 +230,17 @@
         <div>
           <input type="email" id="userEmail" name="userEmail" data-required data-type="email" placeholder="you@company.com">
           <div class="error-text">Enter a valid email address.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="clientName">Client's Name</label>
+          <div class="field-hint">Name of the client or organisation this is prepared for.</div>
+        </div>
+        <div>
+          <input type="text" id="clientName" name="clientName" data-required data-type="name" placeholder="Client or company name">
+          <div class="error-text">Client name must be at least 2 characters and contain only letters, spaces, hyphens or apostrophes.</div>
         </div>
       </div>
 
@@ -501,6 +559,13 @@
       <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Generate Infra Document</button>
     </footer>
 
+    <footer class="page-footer">
+      <div class="page-footer-brand">Vector<span>FLOW</span></div>
+      <div class="page-footer-copy">© 2026 Vector Consulting Group. All rights reserved.</div>
+      <div class="page-footer-conf">This form and its outputs are confidential</div>
+      <div class="page-footer-dev">This project is developed and maintained by the VectorFLOW Deployment Team. For any bugs or issues, write to <a href="mailto:Vflow_DeploymentTeam@vectorconsulting.in">Vflow_DeploymentTeam@vectorconsulting.in</a></div>
+    </footer>
+
   </form>
 </div>
 
@@ -675,6 +740,7 @@
     let valid = false;
     const type = inp.dataset.type||'number';
     if(type==='text') valid = val.length>0;
+    else if(type==='name') valid = val.length>=2 && /^[a-zA-Z\s\-'\.]+$/.test(val);
     else if(type==='email') valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
     else if(type==='date') valid = val.length>0;
     else{
@@ -695,7 +761,7 @@
   }
 
   function allRequiredInputs(){
-    const base = ['userName','userEmail','submissionDate'];
+    const base = ['userName','userEmail','clientName','submissionDate'];
     const mta = activeModule==='mta'||activeModule==='both';
     const mto = activeModule==='mto'||activeModule==='both';
     const bomOn = bomValue.value==='yes';
@@ -712,6 +778,7 @@
       const v=i.value.trim();
       if(!v) return false;
       const type=i.dataset.type||'number';
+      if(type==='name') return v.length>=2 && /^[a-zA-Z\s\-'\.]+$/.test(v);
       if(type==='text') return v.length>0;
       if(type==='email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
       if(type==='date') return v.length>0;

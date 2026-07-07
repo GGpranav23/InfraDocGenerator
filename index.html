@@ -561,8 +561,8 @@
 
     <footer class="page-footer">
       <div class="page-footer-brand">Vector<span>FLOW</span></div>
-      <div class="page-footer-copy">© 2026 Vector Consulting Group. All rights reserved.</div>
-      <div class="page-footer-conf">This form and its outputs are confidential</div>
+      <div class="page-footer-copy">© 2025 VectorFLOW. All rights reserved.</div>
+      <div class="page-footer-conf">This form and its outputs are confidential and prepared exclusively for the named client.</div>
       <div class="page-footer-dev">This project is developed and maintained by the VectorFLOW Deployment Team. For any bugs or issues, write to <a href="mailto:Vflow_DeploymentTeam@vectorconsulting.in">Vflow_DeploymentTeam@vectorconsulting.in</a></div>
     </footer>
 
@@ -842,7 +842,12 @@
     alert('Form validated — payload logged to console. Ready to submit to API.');
   });
 
-  // ── SET TODAY'S DATE AS DEFAULT ──
+  // ── BLOCK e/E/+/- on number inputs ──
+  document.getElementById('infraForm').addEventListener('keydown',e=>{
+    if(e.target.type==='number' && ['e','E','+','-'].includes(e.key)){
+      e.preventDefault();
+    }
+  });
   const today=new Date().toISOString().split('T')[0];
   document.getElementById('submissionDate').value=today;
 

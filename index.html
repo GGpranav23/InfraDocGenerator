@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
     --ink:#1c2230;
@@ -44,7 +45,19 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.55;transition:background .2s,color .2s;}
 
-  .shell{max-width:900px;margin:0 auto;padding:36px 24px 120px;}
+  .shell{
+    max-width:1200px;
+    margin:0 auto;
+    padding:36px 24px 120px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 264px;
+    gap:0 28px;
+    align-items:start;
+  }
+  .shell > .header-row   { grid-column: 1 / -1; }
+  .shell > .progress-wrap{ grid-column: 1 / -1; }
+  .shell > form          { grid-column: 1; min-width: 0; }
+  .shell > .panel-col    { grid-column: 2; position: sticky; top: 72px; }
 
   /* ── HEADER ── */
   .header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:28px;}
@@ -129,6 +142,35 @@
   html[data-theme="dark"] .btn-primary{background:#fff;border-color:#fff;color:#16181c;}
   html[data-theme="dark"] .btn-primary:disabled{background:#5c5f66;border-color:#5c5f66;color:#1c1c1c;}
   html[data-theme="dark"] .btn-primary:not(:disabled):hover,html[data-theme="dark"] .btn-secondary:hover{background:#d8dadf;}
+
+  /* ── SUMMARY PANEL ── */
+  .summary-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:background .2s,border-color .2s;}
+  .sp-head{padding:13px 16px 11px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:7px;}
+  .sp-head-dot{width:7px;height:7px;border-radius:50%;background:#AD3374;flex-shrink:0;}
+  .sp-head-title{font-size:11px;font-weight:700;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);}
+  .sp-body{padding:14px 16px;max-height:calc(100vh - 160px);overflow-y:auto;}
+  .sp-section{margin-bottom:14px;}
+  .sp-section:last-child{margin-bottom:0;}
+  .sp-section-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px;font-family:var(--mono);}
+  .sp-row{display:flex;justify-content:space-between;align-items:baseline;gap:6px;padding:3px 0;border-bottom:1px solid var(--line-soft);}
+  .sp-row:last-child{border-bottom:none;}
+  .sp-key{font-size:11px;color:var(--ink-soft);flex-shrink:0;line-height:1.5;}
+  .sp-val{font-size:11px;font-family:var(--mono);color:var(--ink);text-align:right;max-width:120px;word-break:break-word;line-height:1.5;}
+  .sp-val.em{color:#AD3374;font-weight:700;}
+  .sp-module-badge{display:inline-block;background:#AD337415;border:1px solid #AD337435;color:#AD3374;font-size:11px;font-weight:700;padding:3px 10px;border-radius:5px;font-family:var(--mono);}
+  .sp-divider{height:1px;background:var(--line-soft);margin:12px 0;}
+  .sp-tier{background:var(--brand-soft);border:1.5px solid #AD337430;border-radius:8px;padding:13px 14px;}
+  .sp-tier-label{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;color:#AD3374;margin-bottom:10px;font-weight:700;}
+  .sp-tier-specs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;text-align:center;}
+  .sp-spec-val{display:block;font-size:17px;font-weight:800;font-family:'Montserrat',var(--sans);color:#AD3374;line-height:1.1;}
+  .sp-spec-unit{display:block;font-size:9px;font-family:var(--mono);color:var(--ink-soft);text-transform:uppercase;margin-top:3px;letter-spacing:.04em;}
+  .sp-empty{font-size:11px;color:var(--ink-soft);font-style:italic;padding:6px 0;}
+
+  @media(max-width:900px){
+    .shell{grid-template-columns:1fr;}
+    .shell > .panel-col{grid-column:1;position:static;order:-1;}
+    .sp-body{max-height:none;}
+  }
 
   @media(max-width:620px){.field-row{grid-template-columns:1fr;gap:8px;}section.card{padding:18px;}h1{font-size:20px;}.module-selector button{padding:9px 14px;font-size:13px;}}
 
@@ -228,7 +270,7 @@
           <div class="field-hint">Must be a valid email address.</div>
         </div>
         <div>
-          <input type="email" id="userEmail" name="userEmail" data-required data-type="email" placeholder="you@company.com">
+          <input type="email" id="userEmail" name="userEmail" data-required data-type="email" placeholder="you@vectorconsulting.in">
           <div class="error-text">Enter a valid email address.</div>
         </div>
       </div>
@@ -237,10 +279,11 @@
         <div>
           <label class="field-label" for="clientName">Client's Name</label>
           <div class="field-hint">Name of the client or organisation this is prepared for.</div>
+          <div class="field-hint" style="margin-top:5px;color:#AD3374;">No spaces or special characters. If the name has multiple words or special characters, use CamelCase — e.g. <strong>TataSteelSons</strong></div>
         </div>
         <div>
-          <input type="text" id="clientName" name="clientName" data-required data-type="name" placeholder="Client or company name">
-          <div class="error-text">Client name must be at least 2 characters and contain only letters, spaces, hyphens or apostrophes.</div>
+          <input type="text" id="clientName" name="clientName" data-required data-type="camelcase" placeholder="e.g. TataSteel">
+          <div class="error-text">Use CamelCase with letters and numbers only, starting with a letter. No spaces or special characters (e.g. TataSteelSons).</div>
         </div>
       </div>
 
@@ -559,14 +602,85 @@
       <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Generate Infra Document</button>
     </footer>
 
-    <footer class="page-footer">
-      <div class="page-footer-brand">Vector<span>FLOW</span></div>
-      <div class="page-footer-copy">© 2025 VectorFLOW. All rights reserved.</div>
-      <div class="page-footer-conf">This form and its outputs are confidential and prepared exclusively for the named client.</div>
-      <div class="page-footer-dev">This project is developed and maintained by the VectorFLOW Deployment Team. For any bugs or issues, write to <a href="mailto:Vflow_DeploymentTeam@vectorconsulting.in">Vflow_DeploymentTeam@vectorconsulting.in</a></div>
-    </footer>
-
   </form>
+
+  <!-- ── SUMMARY PANEL ── -->
+  <div class="panel-col">
+    <div class="summary-panel">
+      <div class="sp-head">
+        <span class="sp-head-dot"></span>
+        <span class="sp-head-title">Live Summary</span>
+      </div>
+      <div class="sp-body">
+
+        <!-- Details -->
+        <div class="sp-section" id="sp-details-block">
+          <div class="sp-section-title">Your Details</div>
+          <div class="sp-row"><span class="sp-key">Name</span><span class="sp-val" id="sp-name">—</span></div>
+          <div class="sp-row"><span class="sp-key">Client</span><span class="sp-val" id="sp-client">—</span></div>
+          <div class="sp-row"><span class="sp-key">Date</span><span class="sp-val" id="sp-date">—</span></div>
+        </div>
+
+        <!-- Module -->
+        <div class="sp-section">
+          <div class="sp-section-title">Module</div>
+          <div id="sp-module"><span class="sp-empty">Not selected</span></div>
+        </div>
+
+        <!-- MTA -->
+        <div class="sp-section hidden" id="sp-mta-block">
+          <div class="sp-divider"></div>
+          <div class="sp-section-title">MTA</div>
+          <div class="sp-row"><span class="sp-key">FG SKUs / WIP</span><span class="sp-val" id="sp-f1">—</span></div>
+          <div class="sp-row"><span class="sp-key">RM SKUs</span><span class="sp-val" id="sp-f2">—</span></div>
+          <div class="sp-row"><span class="sp-key">Locations</span><span class="sp-val" id="sp-f3">—</span></div>
+          <div class="sp-row"><span class="sp-key">SKU-Locations</span><span class="sp-val" id="sp-f5">—</span></div>
+          <div class="sp-row"><span class="sp-key">Daily Records</span><span class="sp-val" id="sp-f6">—</span></div>
+          <div class="sp-row"><span class="sp-key">Vendors</span><span class="sp-val" id="sp-f7">—</span></div>
+          <div class="sp-row"><span class="sp-key">Vendor Vol (90d)</span><span class="sp-val" id="sp-f10">—</span></div>
+          <div class="sp-row"><span class="sp-key">MTA Total</span><span class="sp-val em" id="sp-mta-total">—</span></div>
+        </div>
+
+        <!-- MTO -->
+        <div class="sp-section hidden" id="sp-mto-block">
+          <div class="sp-divider"></div>
+          <div class="sp-section-title">MTO</div>
+          <div class="sp-row"><span class="sp-key">Orders / day</span><span class="sp-val" id="sp-f11">—</span></div>
+          <div class="sp-row"><span class="sp-key">CCRs</span><span class="sp-val" id="sp-f12">—</span></div>
+          <div class="sp-row"><span class="sp-key">Trend Data (90d)</span><span class="sp-val" id="sp-f14">—</span></div>
+          <div class="sp-row"><span class="sp-key">MTO Total</span><span class="sp-val em" id="sp-mto-total">—</span></div>
+        </div>
+
+        <!-- Grand total -->
+        <div class="sp-section hidden" id="sp-grand-block">
+          <div class="sp-divider"></div>
+          <div class="sp-row"><span class="sp-key">Grand Total</span><span class="sp-val em" id="sp-grand">—</span></div>
+        </div>
+
+        <!-- Infra tier -->
+        <div class="hidden" id="sp-tier-block">
+          <div class="sp-divider"></div>
+          <div class="sp-tier">
+            <div class="sp-tier-label">Infra Requirement</div>
+            <div class="sp-tier-specs">
+              <div><span class="sp-spec-val" id="sp-cpu">—</span><span class="sp-spec-unit">CPU</span></div>
+              <div><span class="sp-spec-val" id="sp-vcpu">—</span><span class="sp-spec-unit">vCPU</span></div>
+              <div><span class="sp-spec-val" id="sp-ram">—</span><span class="sp-spec-unit">RAM</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="page-footer" style="grid-column:1/-1;">
+    <div class="page-footer-brand">Vector<span>FLOW</span></div>
+    <div class="page-footer-copy">© 2025 VectorFLOW. All rights reserved.</div>
+    <div class="page-footer-conf">This form and its outputs are confidential and prepared exclusively for the named client.</div>
+    <div class="page-footer-dev">This project is developed and maintained by the VectorFLOW Deployment Team. For any bugs or issues, write to <a href="mailto:Vflow_DeploymentTeam@vectorconsulting.in">Vflow_DeploymentTeam@vectorconsulting.in</a></div>
+  </footer>
+
 </div>
 
 <script>
@@ -602,6 +716,7 @@
     toggleSections();
     updateProgress();
     recalcAll();
+    updateSummaryPanel();
   });
 
   function toggleSections(){
@@ -638,6 +753,7 @@
     syncBomRequired();
     recalcAll();
     updateProgress();
+    updateSummaryPanel();
   });
 
   // ── PROCUREMENT TOGGLE ──
@@ -650,6 +766,7 @@
     procValue.value=btn.dataset.value;
     document.getElementById('f23Row').classList.toggle('hidden',btn.dataset.value!=='yes');
     recalcAll();
+    updateSummaryPanel();
   });
 
   function syncBomRequired(){
@@ -675,6 +792,9 @@
     el.textContent = (val===null||isNaN(val))?'—':fmtM(val);
     return val;
   }
+
+  // ── RAW CALC VALUES (used by Excel generator) ──
+  const _calcVals = { f6: 0, f10: 0, f14: 0, f23: 0 };
 
   // ── RECALC ──
   function recalcAll(){
@@ -731,6 +851,84 @@
       if(f23val) parts.push('Full-Kit ÷ 1M');
       document.getElementById('grandFormula').textContent='= '+parts.join(' + ')+' · in Millions';
     }
+
+    // Persist raw values for Excel generator
+    _calcVals.f6  = f6val;
+    _calcVals.f10 = f10val;
+    _calcVals.f14 = f14val;
+    _calcVals.f23 = f23val;
+  }
+
+  // ── SUMMARY PANEL ──
+  function setText(id, val){
+    const el = document.getElementById(id);
+    if(el) el.textContent = (val && val !== '' && val !== '0') ? val : '—';
+  }
+
+  function updateSummaryPanel(){
+    const inp = id => { const el=document.getElementById(id); return el?(el.value||'').trim():''; };
+    const calc = id => { const el=document.getElementById(id); return el?el.textContent.trim():'—'; };
+    const fmt = v => { const n=parseFloat(v); return (!v||isNaN(n))?'—':n.toLocaleString('en-IN'); };
+
+    // Details
+    setText('sp-name',   inp('userName')  || '—');
+    setText('sp-client', inp('clientName')|| '—');
+    setText('sp-date',   inp('submissionDate')|| '—');
+
+    // Module badge
+    const modEl = document.getElementById('sp-module');
+    const modLabels = {mta:'MTA', mto:'MTO', both:'MTA & MTO'};
+    if(activeModule && modLabels[activeModule]){
+      modEl.innerHTML = `<span class="sp-module-badge">${modLabels[activeModule]}</span>`;
+    } else {
+      modEl.innerHTML = `<span class="sp-empty">Not selected</span>`;
+    }
+
+    // MTA
+    const mtaOn = activeModule==='mta'||activeModule==='both';
+    const mtoOn = activeModule==='mto'||activeModule==='both';
+    document.getElementById('sp-mta-block').classList.toggle('hidden', !mtaOn);
+    document.getElementById('sp-mto-block').classList.toggle('hidden', !mtoOn);
+    document.getElementById('sp-grand-block').classList.toggle('hidden', activeModule!=='both');
+
+    if(mtaOn){
+      setText('sp-f1',        fmt(inp('f1')));
+      setText('sp-f2',        fmt(inp('f2')));
+      setText('sp-f3',        fmt(inp('f3')));
+      setText('sp-f5',        calc('f5'));
+      setText('sp-f6',        calc('f6'));
+      setText('sp-f7',        fmt(inp('f7')));
+      setText('sp-f10',       calc('f10'));
+      setText('sp-mta-total', calc('mtaTotal'));
+    }
+
+    if(mtoOn){
+      setText('sp-f11',       fmt(inp('f11')));
+      setText('sp-f12',       fmt(inp('f12')));
+      setText('sp-f14',       calc('f14'));
+      const mtoTotalId = bomValue.value==='yes' ? 'mtoTotal' : 'mtoTotalNoBom';
+      setText('sp-mto-total', calc(mtoTotalId));
+    }
+
+    if(activeModule==='both'){
+      setText('sp-grand', calc('grandTotal'));
+    }
+
+    // Infra tier — show as soon as any total is computable
+    let totalRaw = 0;
+    if(mtaOn)  totalRaw += _calcVals.f6 + _calcVals.f10;
+    if(mtoOn){ totalRaw += _calcVals.f14; if(bomValue.value==='yes'&&procValue.value==='yes') totalRaw += _calcVals.f23; }
+
+    const tierBlock = document.getElementById('sp-tier-block');
+    if(totalRaw > 0){
+      const tier = getInfraTier(totalRaw / 1e6);
+      document.getElementById('sp-cpu').textContent  = tier.cpu;
+      document.getElementById('sp-vcpu').textContent = tier.vcpu;
+      document.getElementById('sp-ram').textContent  = tier.ram;
+      tierBlock.classList.remove('hidden');
+    } else {
+      tierBlock.classList.add('hidden');
+    }
   }
 
   // ── VALIDATION ──
@@ -741,6 +939,7 @@
     const type = inp.dataset.type||'number';
     if(type==='text') valid = val.length>0;
     else if(type==='name') valid = val.length>=2 && /^[a-zA-Z\s\-'\.]+$/.test(val);
+    else if(type==='camelcase') valid = val.length>=2 && /^[a-zA-Z][a-zA-Z0-9]+$/.test(val);
     else if(type==='email') valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
     else if(type==='date') valid = val.length>0;
     else{
@@ -779,6 +978,7 @@
       if(!v) return false;
       const type=i.dataset.type||'number';
       if(type==='name') return v.length>=2 && /^[a-zA-Z\s\-'\.]+$/.test(v);
+      if(type==='camelcase') return v.length>=2 && /^[a-zA-Z][a-zA-Z0-9]+$/.test(v);
       if(type==='text') return v.length>0;
       if(type==='email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
       if(type==='date') return v.length>0;
@@ -800,6 +1000,7 @@
       if(inp.classList.contains('has-error')) validateField(inp);
       recalcAll();
       updateProgress();
+      updateSummaryPanel();
     }
   });
   document.getElementById('infraForm').addEventListener('blur',e=>{
@@ -826,20 +1027,125 @@
     document.querySelectorAll('.summary-total-value').forEach(el=>el.textContent='—');
     toggleSections();
     updateProgress();
+    updateSummaryPanel();
   });
 
+  // ── EXCEL GENERATION ──
+
+  // Tier lookup table — single source of truth
+  function getInfraTier(totalMillions){
+    if(totalMillions<=10)  return {cpu:2,  vcpu:4,  ram:'16 GB'};
+    if(totalMillions<=20)  return {cpu:4,  vcpu:8,  ram:'32 GB'};
+    if(totalMillions<=40)  return {cpu:8,  vcpu:16, ram:'64 GB'};
+    return                        {cpu:16, vcpu:32, ram:'128 GB'}; // >40M (incl. >80M)
+  }
+
+  // Safe cell updater — preserves style, clears stale cached text
+  function updateCell(ws, addr, value){
+    if(!ws[addr]) ws[addr]={t:'s'};
+    ws[addr].v = value;
+    ws[addr].t = 's';
+    delete ws[addr].r; // rich-text cache
+    delete ws[addr].h; // HTML cache
+    delete ws[addr].w; // formatted-text cache
+  }
+
+  async function generateInfraDoc(payload){
+    const {clientName, moduleValue} = payload;
+    const bomOn  = document.getElementById('bomValue').value==='yes';
+    const procOn = document.getElementById('procValue').value==='yes';
+
+    // Total data volume (raw numbers, not millions)
+    let totalRaw = 0;
+    if(moduleValue==='mta'||moduleValue==='both') totalRaw += _calcVals.f6 + _calcVals.f10;
+    if(moduleValue==='mto'||moduleValue==='both'){
+      totalRaw += _calcVals.f14;
+      if(bomOn && procOn) totalRaw += _calcVals.f23;
+    }
+
+    const totalMillions = totalRaw / 1e6;
+    const tier = getInfraTier(totalMillions);
+    const moduleLabel = moduleValue==='mta'?'MTA':moduleValue==='mto'?'MTO':'MTA+MTO';
+
+    // ── FETCH TEMPLATE ──
+    // TODO (server migration): replace the fetch + client-side logic below with:
+    //   const res = await fetch('/api/generate-infra-doc', {
+    //     method: 'POST',
+    //     headers: {'Content-Type':'application/json'},
+    //     body: JSON.stringify({...payload, tier, moduleLabel, totalMillions})
+    //   });
+    //   const blob = await res.blob();
+    //   const url = URL.createObjectURL(blob);
+    //   const a = document.createElement('a');
+    //   a.href = url; a.download = `Server_infra_${clientName}.xlsx`; a.click();
+    //   URL.revokeObjectURL(url);
+    //   return;
+
+    let arrayBuffer;
+    try{
+      const response = await fetch('Server_infra_Cera.xlsx');
+      if(!response.ok) throw new Error('HTTP '+response.status);
+      arrayBuffer = await response.arrayBuffer();
+    }catch(err){
+      alert('Could not load template file.\n\nEnsure "Server_infra_Cera.xlsx" is in the same folder as index.html and you are using Live Server (not opening the file directly).\n\nError: '+err.message);
+      return;
+    }
+
+    // Load workbook preserving styles
+    const wb = XLSX.read(arrayBuffer, {type:'array', cellStyles:true});
+
+    // Rename sheet (Cera → clientname, lowercase)
+    const clientNameLower = clientName.toLowerCase();
+    const oldSheet = wb.SheetNames[0];
+    const ws = wb.Sheets[oldSheet];
+    wb.SheetNames[0] = clientNameLower;
+    wb.Sheets[clientNameLower] = ws;
+    delete wb.Sheets[oldSheet];
+
+    // C2 — Environment label
+    updateCell(ws, 'C2', `Server 1\nPROD(${moduleLabel})`);
+
+    // C3 — CPU / vCPU
+    updateCell(ws, 'C3',
+      `Intel Xeon Gold/Platinum processor \u2013 At least ${tier.cpu} CPU / ${tier.vcpu} vCPU, 2.3+ GHz (Scalable in future)`
+    );
+
+    // C4 — RAM
+    updateCell(ws, 'C4', `${tier.ram} (Scalable in future)`);
+
+    // C25, C26, C27, C39, C40, C41 — replace ClientName placeholder
+    ['C25','C26','C27','C39','C40','C41'].forEach(addr=>{
+      if(ws[addr]) updateCell(ws, addr, ws[addr].v.replace(/ClientName/g, clientNameLower));
+    });
+
+    // Download
+    XLSX.writeFile(wb, `Server_infra_${clientName}.xlsx`, {cellStyles:true, bookSST:false});
+  }
+
   // ── SUBMIT ──
-  document.getElementById('infraForm').addEventListener('submit',e=>{
+  document.getElementById('infraForm').addEventListener('submit', async e=>{
     e.preventDefault();
     if(!activeModule){alert('Please select a module (MTA, MTO, or MTA & MTO).');return;}
     const inputs=allRequiredInputs();
     let allValid=true;
     inputs.forEach(i=>{if(!validateField(i)) allValid=false;});
     if(!allValid){updateProgress();return;}
+
     const payload={};
     new FormData(document.getElementById('infraForm')).forEach((v,k)=>payload[k]=v);
-    console.log('Payload ready:',payload);
-    alert('Form validated — payload logged to console. Ready to submit to API.');
+
+    const btn = document.getElementById('submitBtn');
+    const original = btn.textContent;
+    btn.disabled=true;
+    btn.textContent='Generating…';
+
+    try{
+      await generateInfraDoc(payload);
+    }finally{
+      btn.disabled=false;
+      btn.textContent=original;
+      updateProgress();
+    }
   });
 
   // ── BLOCK e/E/+/- on number inputs ──
@@ -853,6 +1159,7 @@
 
   toggleSections();
   updateProgress();
+  updateSummaryPanel();
 })();
 </script>
 </body>

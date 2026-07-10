@@ -148,7 +148,11 @@
   .sp-head{padding:13px 16px 11px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:7px;}
   .sp-head-dot{width:7px;height:7px;border-radius:50%;background:#AD3374;flex-shrink:0;}
   .sp-head-title{font-size:11px;font-weight:700;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);}
-  .sp-body{padding:14px 16px;max-height:calc(100vh - 160px);overflow-y:auto;}
+  .sp-body{padding:14px 16px;max-height:calc(100vh - 160px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent;}
+  .sp-body::-webkit-scrollbar{width:8px;}
+  .sp-body::-webkit-scrollbar-track{background:transparent;}
+  .sp-body::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px;border:2px solid var(--panel);background-clip:padding-box;}
+  .sp-body::-webkit-scrollbar-thumb:hover{background:var(--brand);background-clip:padding-box;}
   .sp-section{margin-bottom:14px;}
   .sp-section:last-child{margin-bottom:0;}
   .sp-section-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px;font-family:var(--mono);}
@@ -613,14 +617,6 @@
       </div>
       <div class="sp-body">
 
-        <!-- Details -->
-        <div class="sp-section" id="sp-details-block">
-          <div class="sp-section-title">Your Details</div>
-          <div class="sp-row"><span class="sp-key">Name</span><span class="sp-val" id="sp-name">—</span></div>
-          <div class="sp-row"><span class="sp-key">Client</span><span class="sp-val" id="sp-client">—</span></div>
-          <div class="sp-row"><span class="sp-key">Date</span><span class="sp-val" id="sp-date">—</span></div>
-        </div>
-
         <!-- Module -->
         <div class="sp-section">
           <div class="sp-section-title">Module</div>
@@ -869,11 +865,6 @@
     const inp = id => { const el=document.getElementById(id); return el?(el.value||'').trim():''; };
     const calc = id => { const el=document.getElementById(id); return el?el.textContent.trim():'—'; };
     const fmt = v => { const n=parseFloat(v); return (!v||isNaN(n))?'—':n.toLocaleString('en-IN'); };
-
-    // Details
-    setText('sp-name',   inp('userName')  || '—');
-    setText('sp-client', inp('clientName')|| '—');
-    setText('sp-date',   inp('submissionDate')|| '—');
 
     // Module badge
     const modEl = document.getElementById('sp-module');

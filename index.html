@@ -147,7 +147,25 @@
   .summary-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:background .2s,border-color .2s;}
   .sp-head{padding:13px 16px 11px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:7px;}
   .sp-head-dot{width:7px;height:7px;border-radius:50%;background:#AD3374;flex-shrink:0;}
-  .sp-head-title{font-size:11px;font-weight:700;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);}
+  .sp-head-title{font-size:11px;font-weight:700;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);flex:1;}
+  .sp-copy-btn{
+    display:flex;align-items:center;gap:5px;
+    padding:5px 9px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    background:var(--panel);
+    color:var(--ink-soft);
+    font-family:var(--sans);
+    font-size:11px;
+    font-weight:600;
+    cursor:pointer;
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  .sp-copy-btn:hover{ border-color:var(--brand); color:var(--brand); }
+  .sp-copy-btn:active{ transform:translateY(0.5px); }
+  .sp-copy-btn.copied{ border-color:#2e9e5b; color:#2e9e5b; background:rgba(46,158,91,.08); }
+  .sp-copy-btn svg{ flex-shrink:0; }
+  .sp-copy-btn:disabled{ opacity:.5; cursor:not-allowed; }
   .sp-body{padding:14px 16px;max-height:calc(100vh - 160px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent;}
   .sp-body::-webkit-scrollbar{width:8px;}
   .sp-body::-webkit-scrollbar-track{background:transparent;}
@@ -614,6 +632,10 @@
       <div class="sp-head">
         <span class="sp-head-dot"></span>
         <span class="sp-head-title">Live Summary</span>
+        <button type="button" class="sp-copy-btn" id="spCopyBtn" title="Copy summary as text">
+          <svg id="spCopyIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span id="spCopyLabel">Copy</span>
+        </button>
       </div>
       <div class="sp-body">
 
@@ -921,6 +943,110 @@
       tierBlock.classList.add('hidden');
     }
   }
+
+  // ── COPY SUMMARY AS TEXT ──
+  function generateSummaryText(){
+    const inp = id => { const el=document.getElementById(id); return el?(el.value||'').trim():''; };
+    const calc = id => { const el=document.getElementById(id); return el?el.textContent.trim():'—'; };
+    const fmt = v => { const n=parseFloat(v); return (!v||isNaN(n))?'—':n.toLocaleString('en-IN'); };
+    const modLabels = {mta:'MTA', mto:'MTO', both:'MTA & MTO'};
+
+    const mtaOn = activeModule==='mta'||activeModule==='both';
+    const mtoOn = activeModule==='mto'||activeModule==='both';
+    const bothOn = activeModule==='both';
+
+    const lines = [];
+    lines.push('VectorFLOW — Infrastructure Requirements Summary');
+    lines.push('='.repeat(48));
+    lines.push('');
+    lines.push(`Client:        ${inp('clientName') || '—'}`);
+    lines.push(`Prepared by:   ${inp('userName') || '—'}`);
+    lines.push(`Date:          ${inp('submissionDate') || '—'}`);
+    lines.push(`Module:        ${modLabels[activeModule] || 'Not selected'}`);
+
+    if(mtaOn){
+      lines.push('');
+      lines.push('MTA — Make to Availability');
+      lines.push('-'.repeat(48));
+      lines.push(`FG SKUs / WIP          ${fmt(inp('f1'))}`);
+      lines.push(`RM SKUs                ${fmt(inp('f2'))}`);
+      lines.push(`Locations              ${fmt(inp('f3'))}`);
+      lines.push(`SKU-Locations          ${calc('f5')}`);
+      lines.push(`Daily Records          ${calc('f6')}`);
+      lines.push(`Vendors                ${fmt(inp('f7'))}`);
+      lines.push(`Vendor Vol (90d)       ${calc('f10')}`);
+      lines.push(`MTA Total              ${calc('mtaTotal')}`);
+    }
+
+    if(mtoOn){
+      lines.push('');
+      lines.push('MTO — Make to Order');
+      lines.push('-'.repeat(48));
+      lines.push(`Orders / day           ${fmt(inp('f11'))}`);
+      lines.push(`CCRs                   ${fmt(inp('f12'))}`);
+      lines.push(`Trend Data (90d)       ${calc('f14')}`);
+      const mtoTotalId = bomValue.value==='yes' ? 'mtoTotal' : 'mtoTotalNoBom';
+      lines.push(`MTO Total              ${calc(mtoTotalId)}`);
+    }
+
+    if(bothOn){
+      lines.push('');
+      lines.push(`Grand Total            ${calc('grandTotal')}`);
+    }
+
+    const cpu  = document.getElementById('sp-cpu').textContent.trim();
+    const vcpu = document.getElementById('sp-vcpu').textContent.trim();
+    const ram  = document.getElementById('sp-ram').textContent.trim();
+    if(cpu && cpu !== '—'){
+      lines.push('');
+      lines.push('Infra Requirement');
+      lines.push('-'.repeat(48));
+      lines.push(`CPU: ${cpu}   vCPU: ${vcpu}   RAM: ${ram}`);
+    }
+
+    lines.push('');
+    lines.push('-'.repeat(48));
+    lines.push('Generated via VectorFLOW Infrastructure Sizing Tool');
+
+    return lines.join('\n');
+  }
+
+  const spCopyBtn = document.getElementById('spCopyBtn');
+  const spCopyIcon = document.getElementById('spCopyIcon');
+  const spCopyLabel = document.getElementById('spCopyLabel');
+  const checkIconSVG = '<path d="M20 6L9 17l-5-5"></path>';
+  const defaultIconSVG = spCopyIcon.innerHTML;
+
+  spCopyBtn.addEventListener('click', async () => {
+    const text = generateSummaryText();
+    try {
+      if(navigator.clipboard && window.isSecureContext){
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      spCopyBtn.classList.add('copied');
+      spCopyIcon.innerHTML = checkIconSVG;
+      spCopyLabel.textContent = 'Copied';
+      spCopyBtn.disabled = true;
+      setTimeout(() => {
+        spCopyBtn.classList.remove('copied');
+        spCopyIcon.innerHTML = defaultIconSVG;
+        spCopyLabel.textContent = 'Copy';
+        spCopyBtn.disabled = false;
+      }, 1800);
+    } catch(err){
+      spCopyLabel.textContent = 'Failed';
+      setTimeout(() => { spCopyLabel.textContent = 'Copy'; }, 1800);
+    }
+  });
 
   // ── VALIDATION ──
   function validateField(inp){

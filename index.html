@@ -96,6 +96,8 @@
   .field-row{display:grid;grid-template-columns:1fr 220px;gap:16px;align-items:start;padding:14px 0;border-top:1px solid var(--line-soft);}
   .field-row:first-of-type{border-top:none;padding-top:0;}
   label.field-label{font-size:13.5px;font-weight:550;color:var(--ink);display:block;margin-bottom:2px;}
+  .req-mark{color:var(--brand);margin-left:2px;}
+  .req-legend{font-size:12px;color:var(--ink-soft);margin-bottom:14px;display:flex;align-items:center;gap:2px;}
   .field-sub{font-size:11.5px;color:var(--ink-soft);margin-top:2px;font-family:var(--mono);}
   .field-hint{font-size:12px;color:var(--ink-soft);margin-top:3px;}
 
@@ -275,13 +277,15 @@
 
   <form id="infraForm" novalidate>
 
+    <div class="req-legend"><span class="req-mark">*</span> Mandatory field</div>
+
     <!-- ── SECTION 1: PERSONAL INFO ── -->
     <section class="card">
       <div class="card-head"><span class="card-num">01</span><h2 class="card-title">Your Details</h2></div>
       <p class="card-desc">Basic contact information for this submission.</p>
 
       <div class="field-row">
-        <div><label class="field-label" for="userName">Your Name</label></div>
+        <div><label class="field-label" for="userName">Your Name<span class="req-mark">*</span></label></div>
         <div>
           <input type="text" id="userName" name="userName" data-required data-type="name" placeholder="Full name">
           <div class="error-text">Name must be at least 2 characters and contain only letters, spaces, hyphens or apostrophes.</div>
@@ -290,7 +294,7 @@
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="userEmail">Email ID</label>
+          <label class="field-label" for="userEmail">Email ID<span class="req-mark">*</span></label>
           <div class="field-hint">Must be a valid email address.</div>
         </div>
         <div>
@@ -301,7 +305,7 @@
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="clientName">Client's Name</label>
+          <label class="field-label" for="clientName">Client's Name<span class="req-mark">*</span></label>
           <div class="field-hint">Name of the client or organisation this is prepared for.</div>
           <div class="field-hint" style="margin-top:5px;color:#AD3374;">No spaces or special characters. If the name has multiple words or special characters, use CamelCase — e.g. <strong>TataSteelSons</strong></div>
         </div>
@@ -312,7 +316,7 @@
       </div>
 
       <div class="field-row">
-        <div><label class="field-label" for="submissionDate">Date</label></div>
+        <div><label class="field-label" for="submissionDate">Date<span class="req-mark">*</span></label></div>
         <div>
           <input type="date" id="submissionDate" name="submissionDate" data-required data-type="date">
           <div class="error-text">Please select a date.</div>
@@ -339,7 +343,7 @@
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="f1">Number of FG SKUs / WIP</label>
+          <label class="field-label" for="f1">Number of FG SKUs / WIP<span class="req-mark">*</span></label>
           <div class="field-hint">Finished goods and work-in-progress SKU count.</div>
         </div>
         <div>
@@ -361,7 +365,7 @@
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="f3">Number of Plants / CWH / Depots</label>
+          <label class="field-label" for="f3">Number of Plants / CWH / Depots<span class="req-mark">*</span></label>
           <div class="field-hint">Total location count across all types.</div>
         </div>
         <div>
@@ -396,7 +400,7 @@
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="f7">Number of Suppliers / Vendors</label>
+          <label class="field-label" for="f7">Number of Suppliers / Vendors<span class="req-mark">*</span></label>
         </div>
         <div>
           <input type="number" id="f7" name="f7" class="mta-required" min="1" placeholder="e.g. 600" inputmode="numeric">
@@ -406,7 +410,7 @@
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="f8">Number of SKUs per Vendor</label>
+          <label class="field-label" for="f8">Number of SKUs per Vendor<span class="req-mark">*</span></label>
         </div>
         <div>
           <input type="number" id="f8" name="f8" class="mta-required" min="1" placeholder="e.g. 30" inputmode="numeric">
@@ -444,7 +448,7 @@
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="f11">Total MTO Orders / Line Items per Day</label>
+          <label class="field-label" for="f11">Total MTO Orders / Line Items per Day<span class="req-mark">*</span></label>
         </div>
         <div>
           <input type="number" id="f11" name="f11" class="mto-required" min="1" placeholder="e.g. 200" inputmode="numeric">
@@ -454,7 +458,7 @@
 
       <div class="field-row">
         <div>
-          <label class="field-label" for="f12">Count of CCRs</label>
+          <label class="field-label" for="f12">Count of CCRs<span class="req-mark">*</span></label>
           <div class="field-hint">Customer change requests.</div>
         </div>
         <div>
@@ -537,7 +541,7 @@
 
           <div class="field-row">
             <div>
-              <label class="field-label" for="f19">Avg. Items per BOM Level</label>
+              <label class="field-label" for="f19">Avg. Items per BOM Level<span class="req-mark">*</span></label>
             </div>
             <div>
               <input type="number" id="f19" name="f19" class="bom-required" min="1" placeholder="e.g. 25" inputmode="numeric">
@@ -547,7 +551,7 @@
 
           <div class="field-row">
             <div>
-              <label class="field-label" for="f20">Number of BOM Levels</label>
+              <label class="field-label" for="f20">Number of BOM Levels<span class="req-mark">*</span></label>
             </div>
             <div>
               <input type="number" id="f20" name="f20" class="bom-required" min="1" placeholder="e.g. 8" inputmode="numeric">

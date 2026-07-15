@@ -85,11 +85,18 @@
 
   function syncBomRequired(){
     const mto = activeModule==='mto'||activeModule==='both';
+    const both = activeModule==='both';
     const bomOn = bomValue.value==='yes' && mto;
     document.querySelectorAll('.bom-required').forEach(i=>{
       i.dataset.required = bomOn?'true':'';
       if(!bomOn){i.value='';i.classList.remove('has-error');}
     });
+    // In Both mode, RM SKUs comes from the MTA section's f2 field — hide the
+    // duplicate input here so there's a single source of truth.
+    const f15Row = document.getElementById('f15Row');
+    if(f15Row) f15Row.classList.toggle('hidden', !bomOn || both);
+    const f16Sub = document.getElementById('f16Sub');
+    if(f16Sub) f16Sub.textContent = both ? '= RM SKUs (from MTA section) × 3' : '= RM SKUs × 3';
   }
 
   // ── HELPERS ──
@@ -137,7 +144,7 @@
       f14val=f13*90; setCalc('f14',f14val);
 
       if(bomOn){
-        const f15=num('f15');
+        const f15 = both ? num('f2') : num('f15');
         const f16=f15*3; setCalc('f16',f16);
         setCalc('f17',f11);
         const f18=f16+f11; setCalc('f18',f18);
@@ -219,6 +226,23 @@
       setText('sp-mto-total', calc(mtoTotalId));
     }
 
+    // BOM — only shown when the BOM module is actually included
+    const bomOn = mtoOn && bomValue.value==='yes';
+    document.getElementById('sp-bom-block').classList.toggle('hidden', !bomOn);
+    if(bomOn){
+      const both = activeModule==='both';
+      setText('sp-f15', fmt(both ? inp('f2') : inp('f15')));
+      setText('sp-f16', calc('f16'));
+      setText('sp-f18', calc('f18'));
+      setText('sp-f19', fmt(inp('f19')));
+      setText('sp-f20', fmt(inp('f20')));
+      setText('sp-f21', calc('f21'));
+      setText('sp-f22', calc('f22'));
+      const procOn = procValue.value==='yes';
+      document.getElementById('sp-f23-row').classList.toggle('hidden', !procOn);
+      if(procOn) setText('sp-f23', calc('f23'));
+    }
+
     if(activeModule==='both'){
       setText('sp-grand', calc('grandTotal'));
     }
@@ -283,6 +307,23 @@
       lines.push(`Trend Data (90d)       ${calc('f14')}`);
       const mtoTotalId = bomValue.value==='yes' ? 'mtoTotal' : 'mtoTotalNoBom';
       lines.push(`MTO Total              ${calc(mtoTotalId)}`);
+    }
+
+    const bomOn = mtoOn && bomValue.value==='yes';
+    if(bomOn){
+      lines.push('');
+      lines.push('BOM — Bill of Materials');
+      lines.push('-'.repeat(48));
+      lines.push(`RM SKUs                ${fmt(bothOn ? inp('f2') : inp('f15'))}`);
+      lines.push(`BOR Orders /day        ${calc('f16')}`);
+      lines.push(`Explosion Line Items   ${calc('f18')}`);
+      lines.push(`Avg Items/BOM Level    ${fmt(inp('f19'))}`);
+      lines.push(`BOM Levels             ${fmt(inp('f20'))}`);
+      lines.push(`Total BOM Items        ${calc('f21')}`);
+      lines.push(`Line Items/Total Orders ${calc('f22')}`);
+      if(procValue.value==='yes'){
+        lines.push(`Full-Kit (90d)         ${calc('f23')}`);
+      }
     }
 
     if(bothOn){
@@ -378,9 +419,9 @@
     const mto = activeModule==='mto'||activeModule==='both';
     const bomOn = bomValue.value==='yes';
     let ids=[...base];
-    if(mta) ids.push('f1','f2','f3','f7','f8');
+    if(mta) ids.push('f1','f3','f7','f8');
     if(mto) ids.push('f11','f12');
-    if(mto&&bomOn) ids.push('f15','f19','f20');
+    if(mto&&bomOn) ids.push('f19','f20');
     return ids.map(id=>document.getElementById(id)).filter(Boolean);
   }
 

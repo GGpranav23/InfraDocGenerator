@@ -497,20 +497,20 @@
       <!-- BOM SUB-SECTION -->
       <div id="bomSection" class="hidden" style="margin-top:18px;">
 
-        <div class="field-row">
+        <div class="field-row" id="f15Row">
           <div>
             <label class="field-label" for="f15">Number of RM SKUs</label>
           </div>
           <div>
-            <input type="number" id="f15" name="f15" class="bom-required" min="1" placeholder="e.g. 20000" inputmode="numeric">
-            <div class="error-text">Enter a number > 0.</div>
+            <input type="number" id="f15" name="f15" class="bom-required" min="0" placeholder="e.g. 20000" inputmode="numeric">
+            <div class="error-text">Enter a number ≥ 0.</div>
           </div>
         </div>
 
         <div class="field-row">
           <div>
             <label class="field-label">MTA BOR Orders (TOR+TOB+TOG) per Day</label>
-            <div class="field-sub">= RM SKUs × 3</div>
+            <div class="field-sub" id="f16Sub">= RM SKUs × 3</div>
           </div>
           <div><div class="calc-field" id="f16">—</div></div>
         </div>
@@ -669,6 +669,20 @@
           <div class="sp-row"><span class="sp-key">CCRs</span><span class="sp-val" id="sp-f12">—</span></div>
           <div class="sp-row"><span class="sp-key">Trend Data (90d)</span><span class="sp-val" id="sp-f14">—</span></div>
           <div class="sp-row"><span class="sp-key">MTO Total</span><span class="sp-val em" id="sp-mto-total">—</span></div>
+        </div>
+
+        <!-- BOM -->
+        <div class="sp-section hidden" id="sp-bom-block">
+          <div class="sp-divider"></div>
+          <div class="sp-section-title">BOM</div>
+          <div class="sp-row"><span class="sp-key">RM SKUs</span><span class="sp-val" id="sp-f15">—</span></div>
+          <div class="sp-row"><span class="sp-key">BOR Orders /day</span><span class="sp-val" id="sp-f16">—</span></div>
+          <div class="sp-row"><span class="sp-key">Explosion Line Items</span><span class="sp-val" id="sp-f18">—</span></div>
+          <div class="sp-row"><span class="sp-key">Avg Items / BOM Level</span><span class="sp-val" id="sp-f19">—</span></div>
+          <div class="sp-row"><span class="sp-key">BOM Levels</span><span class="sp-val" id="sp-f20">—</span></div>
+          <div class="sp-row"><span class="sp-key">Total BOM Items</span><span class="sp-val" id="sp-f21">—</span></div>
+          <div class="sp-row"><span class="sp-key">Line Items / Total Orders</span><span class="sp-val" id="sp-f22">—</span></div>
+          <div class="sp-row hidden" id="sp-f23-row"><span class="sp-key">Full-Kit (90d)</span><span class="sp-val" id="sp-f23">—</span></div>
         </div>
 
         <!-- Grand total -->

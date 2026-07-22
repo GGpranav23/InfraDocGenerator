@@ -1,5 +1,51 @@
 (function(){
 
+  // ── ERROR TRACKING ──
+  // Every failure is written to a small rolling log in this browser's localStorage
+  // so nothing fails silently. To also forward errors to a real endpoint later
+  // (Teams/Slack webhook, logging API, etc.), set ERROR_WEBHOOK_URL below and add
+  // that endpoint's origin to connect-src in the CSP (index.html meta tag + web.config).
+  const ERROR_WEBHOOK_URL = '';
+  const ERROR_LOG_KEY = 'vfErrorLog';
+  const ERROR_LOG_MAX = 25;
+
+  function logError(context, err, extra){
+    const record = {
+      time: new Date().toISOString(),
+      context: context,
+      message: (err && err.message) ? err.message : String(err),
+      stack: (err && err.stack) ? String(err.stack).split('\n').slice(0,5).join(' | ') : '',
+      module: (typeof activeModule!=='undefined' && activeModule) || null,
+      client: (extra && extra.clientName) || null,
+      url: location.href,
+      ua: navigator.userAgent
+    };
+    console.error('[vf-error]', record);
+    try{
+      const raw = localStorage.getItem(ERROR_LOG_KEY);
+      const log = raw ? JSON.parse(raw) : [];
+      log.push(record);
+      while(log.length > ERROR_LOG_MAX) log.shift();
+      localStorage.setItem(ERROR_LOG_KEY, JSON.stringify(log));
+    }catch(e){}
+    if(ERROR_WEBHOOK_URL){
+      try{
+        fetch(ERROR_WEBHOOK_URL, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(record)
+        }).catch(()=>{});
+      }catch(e){}
+    }
+  }
+
+  window.addEventListener('error', function(e){
+    logError('window.onerror', e.error || e.message);
+  });
+  window.addEventListener('unhandledrejection', function(e){
+    logError('unhandledrejection', e.reason);
+  });
+
   // ── THEME ──
   const root = document.documentElement;
   function applyTheme(t){
@@ -541,39 +587,45 @@
       if(!response.ok) throw new Error('HTTP '+response.status);
       arrayBuffer = await response.arrayBuffer();
     }catch(err){
+      logError('template-fetch', err, {clientName});
       alert('Could not load template file.\n\nEnsure "Server_infra_Template.xlsx" is in the same folder as index.html and you are using Live Server (not opening the file directly).\n\nError: '+err.message);
       return;
     }
 
-    // Load workbook preserving styles
-    const wb = XLSX.read(arrayBuffer, {type:'array', cellStyles:true});
+    try{
+      // Load workbook preserving styles
+      const wb = XLSX.read(arrayBuffer, {type:'array', cellStyles:true});
 
-    // Rename sheet (Cera → clientname, lowercase)
-    const clientNameLower = clientName.toLowerCase();
-    const oldSheet = wb.SheetNames[0];
-    const ws = wb.Sheets[oldSheet];
-    wb.SheetNames[0] = clientNameLower;
-    wb.Sheets[clientNameLower] = ws;
-    delete wb.Sheets[oldSheet];
+      // Rename sheet (Cera → clientname, lowercase)
+      const clientNameLower = clientName.toLowerCase();
+      const oldSheet = wb.SheetNames[0];
+      const ws = wb.Sheets[oldSheet];
+      wb.SheetNames[0] = clientNameLower;
+      wb.Sheets[clientNameLower] = ws;
+      delete wb.Sheets[oldSheet];
 
-    // C2 — Environment label
-    updateCell(ws, 'C2', `Server 1\nPROD(${moduleLabel})`);
+      // C2 — Environment label
+      updateCell(ws, 'C2', `Server 1\nPROD(${moduleLabel})`);
 
-    // C3 — CPU / vCPU
-    updateCell(ws, 'C3',
-      `Intel Xeon Gold/Platinum processor \u2013 At least ${tier.cpu} CPU / ${tier.vcpu} vCPU, 2.3+ GHz (Scalable in future)`
-    );
+      // C3 — CPU / vCPU
+      updateCell(ws, 'C3',
+        `Intel Xeon Gold/Platinum processor \u2013 At least ${tier.cpu} CPU / ${tier.vcpu} vCPU, 2.3+ GHz (Scalable in future)`
+      );
 
-    // C4 — RAM
-    updateCell(ws, 'C4', `${tier.ram} (Scalable in future)`);
+      // C4 — RAM
+      updateCell(ws, 'C4', `${tier.ram} (Scalable in future)`);
 
-    // C25, C26, C27, C39, C40, C41 — replace ClientName placeholder
-    ['C25','C26','C27','C39','C40','C41'].forEach(addr=>{
-      if(ws[addr]) updateCell(ws, addr, ws[addr].v.replace(/ClientName/g, clientNameLower));
-    });
+      // C25, C26, C27, C39, C40, C41 — replace ClientName placeholder
+      ['C25','C26','C27','C39','C40','C41'].forEach(addr=>{
+        if(ws[addr]) updateCell(ws, addr, ws[addr].v.replace(/ClientName/g, clientNameLower));
+      });
 
-    // Download
-    XLSX.writeFile(wb, `Server_infra_${clientName}.xlsx`, {cellStyles:true, bookSST:false});
+      // Download
+      XLSX.writeFile(wb, `Server_infra_${clientName}.xlsx`, {cellStyles:true, bookSST:false});
+    }catch(err){
+      logError('xlsx-build-or-write', err, {clientName});
+      alert('Something went wrong while generating the document.\n\nYour inputs have not been lost — please try submitting again. If this keeps happening, contact the deployment team with the error below.\n\nError: '+err.message);
+    }
   }
 
   // ── SUBMIT ──
@@ -595,6 +647,9 @@
 
     try{
       await generateInfraDoc(payload);
+    }catch(err){
+      logError('submit-handler', err, {clientName: payload.clientName});
+      alert('Unexpected error while generating the document.\n\nPlease try again. If this keeps happening, contact the deployment team with the error below.\n\nError: '+err.message);
     }finally{
       btn.disabled=false;
       btn.textContent=original;
@@ -610,6 +665,79 @@
   });
   const today=new Date().toISOString().split('T')[0];
   document.getElementById('submissionDate').value=today;
+
+  // ── DIAGNOSTICS PANEL (Ctrl+Shift+E) ──
+  function readErrorLog(){
+    try{
+      const raw = localStorage.getItem(ERROR_LOG_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){ return []; }
+  }
+
+  function renderDiagLog(){
+    const body = document.getElementById('diagBody');
+    const log = readErrorLog();
+    if(!log.length){
+      body.innerHTML = '<div class="diag-empty">No errors recorded in this browser.</div>';
+      return;
+    }
+    body.innerHTML = log.slice().reverse().map(r=>
+      `<div class="diag-entry"><span class="diag-entry-ctx">[${r.context}]</span> ${r.time}\n${r.message}${r.client?'\nClient: '+r.client:''}${r.module?' · Module: '+r.module:''}</div>`
+    ).join('');
+  }
+
+  function diagLogAsText(){
+    const log = readErrorLog();
+    if(!log.length) return 'No errors recorded in this browser.';
+    return log.map(r =>
+      `[${r.time}] ${r.context}\n`+
+      `Message: ${r.message}\n`+
+      (r.client ? `Client: ${r.client}\n` : '') +
+      (r.module ? `Module: ${r.module}\n` : '') +
+      `URL: ${r.url}\n`+
+      `Browser: ${r.ua}\n`+
+      (r.stack ? `Stack: ${r.stack}\n` : '')
+    ).join('\n' + '-'.repeat(40) + '\n');
+  }
+
+  const diagOverlay = document.getElementById('diagOverlay');
+  function openDiag(){ renderDiagLog(); diagOverlay.classList.remove('hidden'); }
+  function closeDiag(){ diagOverlay.classList.add('hidden'); }
+
+  document.addEventListener('keydown', e=>{
+    if(e.ctrlKey && e.shiftKey && (e.key==='E'||e.key==='e')){
+      e.preventDefault();
+      diagOverlay.classList.contains('hidden') ? openDiag() : closeDiag();
+    }
+  });
+  document.getElementById('diagClose').addEventListener('click', closeDiag);
+  diagOverlay.addEventListener('click', e=>{ if(e.target===diagOverlay) closeDiag(); });
+
+  document.getElementById('diagCopyBtn').addEventListener('click', async ()=>{
+    const btn = document.getElementById('diagCopyBtn');
+    const text = diagLogAsText();
+    try{
+      if(navigator.clipboard && window.isSecureContext){
+        await navigator.clipboard.writeText(text);
+      }else{
+        const ta=document.createElement('textarea');
+        ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+      }
+      const original=btn.textContent;
+      btn.textContent='Copied';
+      setTimeout(()=>{ btn.textContent=original; }, 1500);
+    }catch(e){
+      btn.textContent='Failed';
+      setTimeout(()=>{ btn.textContent='Copy log'; }, 1500);
+    }
+  });
+
+  document.getElementById('diagClearBtn').addEventListener('click', ()=>{
+    try{ localStorage.removeItem(ERROR_LOG_KEY); }catch(e){}
+    renderDiagLog();
+  });
 
   toggleSections();
   updateProgress();
